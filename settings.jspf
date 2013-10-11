@@ -1,0 +1,87 @@
+<script src="settings.js"></script>
+
+<div id="settings" class="dialog-window">
+	<table class="titlebar">
+		<tr>
+			<td>
+				<div class="title">Settings</div>
+			</td>
+			<td class="buttons">
+				<a class="titlebar-button" onclick="saveAndHideSettings();"><img src="../graphics/close.png" /></a>
+			</td>
+		</tr>
+	</table>
+	<table width="100%" height="98%">
+		<tr>
+			<td width="100%">
+				<div class="group">Display</div>
+				<table class="settings-section">
+					<tr>
+						<td>
+							<input type="checkbox" id="setting-invert-colors" onclick="toggleBackground();" />Invert colors
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="setting-show-fps" onclick="toggleFPS();" />Show FPS
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<a class="button" id="speed-test" onclick="showSpeedTest();">Browser speed test</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<!-- Deprecate until fixed -->
+		<!--
+		<tr>
+			<td>
+				<div class="group">Rendering</div>
+				<table class="settings-section">
+					<tr>
+						<td>
+							<div class="radio-group">
+								<div class="radio-group-label">Calorimeter energy display mode</div>
+								<div class="radio">
+									<input type="radio" name="calorimeter-display" value="opacity" checked="true" onclick="setTowers(false);"/>Opacity is proportional to energy (faster)
+								</div>
+								<div class="radio">
+									<input type="radio" name="calorimeter-display" value="towers" onclick="setTowers(true);" />Size is proportional to energy (slower but consistent with lego plots)
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="setting-global-cut" onclick="toggleGlobalCut();" />Show only calorimeter hits with energies in the top 
+							<input class="text-input" type="text" id="settings-global-low-cut-percentage" size="5"/> percent.
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="wireframe-sides" onclick="toggleTowersWireframe();" />Show tower sides as wireframes.
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		-->
+		<tr>
+			<td align="right">
+				<table>
+					<tr>
+						<td></td>
+						<td>
+							<a class="button" id="settings-close" onclick="saveAndHideSettings();">Close</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>

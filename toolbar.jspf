@@ -1,0 +1,100 @@
+<table id="toolbar">
+	<tr>
+		<td>
+			<a class="toolbar-button" onclick="showEventBrowser();">
+				<img src="../graphics/open.png" title="Open"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="saveCanvasData();">
+				<img src="../graphics/document-save.png" title="Save This Event Display"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="renderCanvasData();">
+				<img src="../graphics/image-x-generic.png" title="Open Image in New Window"/>
+			</a>
+		</td>
+		<td class="toolbar-separator">
+			&nbsp;
+		</td>
+		<td>
+			<a class="toolbar-button disabled" id="prev-event-button" onclick="prevEvent();">
+				<img src="../graphics/prev-event.png" title="Previous Event"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button disabled" id="next-event-button" onclick="nextEvent();">
+				<img src="../graphics/next-event.png" title="Next Event"/>
+			</a>
+		</td>
+		<td class="toolbar-separator">
+			&nbsp;
+		</td>
+
+		<td>
+			<a class="toolbar-button" onclick="setCameraHome();">
+				<img src="../graphics/home.png" title="Return to Start View"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="zoom(1);">
+				<img src="../graphics/zoom_in_24.png" title="Zoom In"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="zoom(-1);">
+				<img src="../graphics/zoom_out_24.png" title="Zoom Out"/>
+			</a>
+		</td>
+
+		<td class="toolbar-separator">
+			&nbsp;
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="setCameraRotation(0, 0, 0);">
+				<img src="../graphics/z-plane.png" title="X-Y Plane"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="setCameraRotation(0, Math.PI / 2, Math.PI / 2);">
+				<img src="../graphics/y-plane.png" title="Z-X Plane"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="setCameraRotation(0, Math.PI / 2, 0);">
+				<img src="../graphics/x-plane.png" title="Y-Z Plane"/>
+			</a>
+		</td>
+		<td class="toolbar-separator">
+			&nbsp;
+		</td>
+		<td>
+			<a class="toolbar-button" id="perspective-view" onclick="setPerspectiveProjection(true);">
+				<img src="../graphics/perspective-projection.png" title="Perspective View"/>
+			</a>
+		</td>
+		<td>
+			<a class="toolbar-button" id="orthographic-view" onclick="setPerspectiveProjection(false);">
+				<img src="../graphics/orthographic-projection.png" title="Orthographic View"/>
+			</a>
+		</td>
+		<td class="toolbar-separator">
+			&nbsp;
+		</td>
+		<td>
+			<a class="toolbar-button" onclick="showSettings();">
+				<img src="../graphics/settings.png" title="Settings"/>
+			</a>
+		</td>
+		<td class="toolbar-separator">
+			&nbsp;
+		</td>
+		<td>
+			<a class="toolbar-button" id="help" onclick="openAboutWindow();">
+				<img src="../graphics/help2.png" title="About"/>
+			</a>
+		</td>
+	</tr>
+</table>
+

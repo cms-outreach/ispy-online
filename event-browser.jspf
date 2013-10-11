@@ -1,0 +1,64 @@
+<script src="event-browser.js"></script>
+<div id="event-browser" class="dialog-window">
+	<table class="titlebar">
+		<tr>
+			<td>
+				<div class="title">Open Event</div>
+			</td>
+			<td class="buttons">
+				<a class="titlebar-button" onclick="closeEventBrowser();"><img src="../graphics/close.png" /></a>
+			</td>
+		</tr>
+	</table>
+	<table width="100%" id="browser-table">
+		<tr>
+			<th width="50%">Files</th><th>Events</th>
+		</tr>
+		<tr id="panels">
+			<td>
+				<div style="overflow: auto;" class="flexcroll browser-panel" id="browser-files-div">
+					<table id="browser-files">
+					</table>
+				</div>
+			</td>
+			<td>
+				<div style="overflow: auto;" class="flexcroll browser-panel" id="browser-events-div">
+					<table id="browser-events">
+					</table>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div id="selected-event"></div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right">
+				<table>
+					<tr>
+						<td>
+							<a class="button" id="browser-close" onclick="closeEventBrowser();">Close</a>
+						</td>
+						<td>
+							<a class="button" id="browser-load" onclick="loadEvent();">Load</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>
+<div id="load-progress-window" class="dialog-window">
+	<table class="titlebar">
+		<tr>
+			<td>
+				<div class="title" id="load-progress-window-title"></div>
+			</td>
+		</tr>
+	</table>
+	<div id="event-load-progress-frame">
+		<div id="event-load-progress-bar"></div>
+	</div>
+	<div id="event-load-progress-text">0%</div>
+</div>

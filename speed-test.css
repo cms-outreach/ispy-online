@@ -1,0 +1,31 @@
+#test-zone {
+	display: none;
+}
+
+#speed-test-window {
+	z-index: 12;
+	width: 400px;
+	height: 200px;
+}
+
+#speed-progress {
+	margin-top: 16px;
+	height: 10px;
+	width: 360px;
+	border: thin solid #404040;
+	padding: 1px;
+	margin-left: 8px;
+}
+
+#speed-progress-bar {
+	height: 10px;
+	background: #808080;
+	width: 0px;
+}
+
+#speed-progress-number {
+	position: relative;
+	left: 140px;
+	top: 0px;
+	color: white;
+}

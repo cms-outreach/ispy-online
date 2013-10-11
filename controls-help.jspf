@@ -1,0 +1,20 @@
+<div class="group">Controls:</div>
+<table>
+<tr><td class="ctrl"><img src="../graphics/mouse.png" /></td><td>&rarr;</td><td>rotate</td></tr>
+<tr><td class="ctrl"><span class="key">Ctrl</span> + <img src="../graphics/mouse.png" /></td><td>&rarr;</td><td>pan x/y</td></tr>
+<tr><td class="ctrl"><span class="key">Ctrl</span> + 
+	<span class="key">&#9650</span>
+	<span class="key">&#9660</span>
+	<span class="key">&#9664</span>
+	<span class="key">&#9654</span>
+	</td><td>&rarr;</td><td>pan x/y</td>
+</tr>
+<tr><td class="ctrl"><span class="key">Shift &#8679</span> + <img src="../graphics/mouse.png" /></td>
+<td>&rarr;</td><td>zoom</td>
+</tr>
+<tr><td class="ctrl"><span class="key">Shift &#8679</span> +
+<span class="key">&#9650</span>
+<span class="key">&#9660</span>
+<td>&rarr;</td><td>zoom</td>
+</tr>
+</table>

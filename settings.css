@@ -1,0 +1,31 @@
+#settings {
+	width: 400px;
+}
+
+#settings p {
+	padding: 8px;
+}
+
+.radio-group {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	border: thin solid gray;
+	padding: 4px;
+	padding-top: 0px;
+	padding-bottom: 8px;
+	margin-top: 16px;
+}
+
+.radio-group-label {
+	display: inline;
+	position: relative;
+	top: -8px;
+	background-color: black;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.white .radio-group-label {
+	background-color: white;
+}

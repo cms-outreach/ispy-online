@@ -1,0 +1,37 @@
+
+.range-selector-button {
+	display: inline;
+}
+
+#range-selector {
+	width: 500px;
+	height: 120px;
+	left: 200px;
+	top: 100px;
+}
+
+#range-selector-canvas {
+	margin-left: 8px;
+	margin-top: 8px;
+	width: 220px;
+	height: 80px;
+}
+
+.text-input {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background-color: black;
+	border: thin solid #e0e0e0;
+	color: white;
+}
+
+.white .text-input {
+	background-color: white;
+	border: thin solid #202020;
+	color: black;
+}
+
+.text-input[disabled] {
+	border: thin solid #808080;
+}

@@ -1,0 +1,47 @@
+<script src="about.js"></script>
+
+<div id="about" class="dialog-window">
+	<table class="titlebar">
+		<tr>
+			<td>
+				<div class="title">About</div>
+			</td>
+			<td class="buttons">
+				<a class="titlebar-button" onclick="closeAboutWindow();"><img src="../graphics/close.png" /></a>
+			</td>
+		</tr>
+	</table>
+	<table width="100%" height="98%">
+		<tr>
+			<td width="100%">
+				<p>This is a browser-based event display for the <a target="edabout" href="http://cern.ch/cms">CMS experiment</a> at the LHC.</p>
+				<p>
+					This software is part of the <a target="edabout" href="http://www.i2u2.org">I2U2</a> project, 
+					which is published under the <a target="edabout" href="http://fermitools.fnal.gov/about/terms.html">Fermitools License</a>.
+				</p>
+				<p>
+					The <a target="edabout" href="http://deanm.github.com/pre3d/">3D library</a> was initially developed by Dean McNamee
+					and is published under a <a target="edabout" href="http://www.opensource.org/licenses/bsd-license.php">BSD license</a>.
+				</p>
+				<p>
+					Questions/comments: <a href="mailto:thomas.mccauley@cern.ch">Tom McCauley</a>
+				</p>
+				<p>
+					Reference: <a href="http://iopscience.iop.org/1742-6596/396/2/022022/">J.Phys.Conf.Ser. 396 (2012) 022022</a>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">
+				<table>
+					<tr>
+						<td></td>
+						<td>
+							<a class="button" target="edabout" id="settings-close" onclick="closeAboutWindow();">Close</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>

@@ -1,0 +1,107 @@
+<%@ page import="java.awt.*" %>
+<%@ page import="java.awt.image.BufferedImage" %>
+<%@ page import="java.io.*" %>
+<%@ page import="java.sql.Timestamp" %>
+<%@ page import="java.text.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="javax.imageio.ImageIO" %>
+
+<%@ page import="gov.fnal.elab.*" %>
+<%@ page import="gov.fnal.elab.analysis.*" %>
+<%@ page import="gov.fnal.elab.datacatalog.*" %>
+
+<%@ page import="org.apache.commons.codec.binary.Base64" %>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.io.IOUtils" %>
+<%@ page import="org.apache.http.client.HttpResponseException" %>
+
+<%@ include file="../login/login-required.jsp" %>
+<%@ include file="../include/elab.jsp" %>
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    
+<%
+	try {
+		String payload = request.getParameter("base64image");
+		if (StringUtils.isBlank(payload) ) {
+			throw new HttpResponseException(HttpServletResponse.SC_BAD_REQUEST, "missing image payload");
+		}
+		
+		// we must validate our data. only accept what java can understand
+
+		InputStream is = null; 
+		BufferedImage bi = null; 
+		try {
+			is = new ByteArrayInputStream(Base64.decodeBase64(payload));
+			bi = ImageIO.read(is);
+			if (bi == null) throw new IOException(); 
+		}
+		catch(IOException ioe) {
+			throw new HttpResponseException(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "image payload not understood");
+		}
+		catch (IllegalArgumentException iae) {
+			throw new HttpResponseException(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "image payload not understood");
+		}
+		finally {
+			if (is == null) is.close(); 
+		}
+
+		ElabGroup group = user.getGroup();
+		
+		String groupName = user.getGroup().getName();
+		String plotDir = user.getDir("plots");
+		
+		// check if the directory exist, create otherwise
+		File file = new File(plotDir); 
+		if (!file.exists()) {
+			file.mkdirs(); 
+		}
+		
+		GregorianCalendar gc = new GregorianCalendar();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MMdd.HHmmss.SSSS");
+	    String date = sdf.format(gc.getTime());
+
+	    String dstFile = "savedimage-" + groupName + "-" + date + ".png";
+	    String dstThumb = "savedimage-" + groupName + "-" + date + "_thm.png";
+	    File chartFile = new File(plotDir, dstFile);
+	    
+	    ImageIO.write(bi, "png", chartFile);
+	    
+	    BufferedImage thmImg = new BufferedImage(150, 150, BufferedImage.TYPE_INT_RGB); 
+	    Graphics2D g = thmImg.createGraphics(); 
+	    g.drawImage(bi, 0, 0, 150, 150, null); 
+	    g.dispose(); 
+	    
+	    File chartThumbnailFile = new File(plotDir, dstThumb);
+	    ImageIO.write(bi, "png", chartThumbnailFile); 
+	    
+	    /* Write the metadata */ 
+		DataCatalogProvider dcp = elab.getDataCatalogProvider();
+		java.util.List<String> meta = new ArrayList();
+		
+		// Fixed metadata 
+		meta.add("type string plot");
+		meta.add("analysis string cms-event-display"); 
+		meta.add("creationdate date " + (new Timestamp(System.currentTimeMillis())).toString());
+		
+		// File-specific metadata 
+		meta.add("city string " + group.getCity());
+		meta.add("group string " + group.getName());
+		meta.add("project string " + elab.getName());
+		meta.add("school string " + group.getSchool());
+		meta.add("state string " + group.getState());
+		meta.add("teacher string " + group.getTeacher());
+		meta.add("year string " + group.getYear());
+		meta.add("thumbnail string " + dstThumb);
+		meta.add("filename string " + dstFile);
+		
+		/* TODO: need to add a whole lot of CMS-specific metadata */
+		
+		dcp.insert(DataTools.buildCatalogEntry(dstFile, meta));
+	}
+	catch(HttpResponseException hre) {
+		response.sendError(hre.getStatusCode(), hre.getMessage());  
+	}
+	
+%>    

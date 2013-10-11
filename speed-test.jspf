@@ -1,0 +1,55 @@
+<script src="speed-test.js"></script>
+
+<div id="test-zone">
+	<canvas id="test-canvas" width="320" height="200"></canvas>
+</div>
+
+<div id="speed-test-window" class="dialog-window">
+	<table class="titlebar">
+		<tr>
+			<td>
+				<div class="title">Browser Speed Test</div>
+			</td>
+			<td class="buttons">
+				<a class="titlebar-button" onclick="closeSpeedTest();"><img src="../graphics/close.png" /></a>
+			</td>
+		</tr>
+	</table>
+	<table width="90%" style="padding: 8px">
+		<tr>
+			<td colspan="2">
+				<div id="speed-progress">
+					<div id="speed-progress-bar"></div>
+					<div id="speed-progress-number"></div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td id="vtl" width="50%">
+			</td>
+			<td id="vtv" width="50%">
+			</td>
+		</tr>
+		<tr>
+			<td id="frl" width="50%">
+			</td>
+			<td id="frv" width="50%">
+			</td>
+		</tr>
+		<tr>
+			<td align="right" colspan="2">
+				<table>
+					<tr>
+						<td></td>
+						<td>
+							<a class="button" id="start-test" onclick="startTest();">Start test</a>
+						</td>
+						<td>
+							<a class="button" id="cancel-test" onclick="closeSpeedTest();">Cancel</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>
