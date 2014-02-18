@@ -1,4 +1,4 @@
-<script src="settings.js"></script>
+<script src="../js/settings.js"></script>
 
 <div id="settings" class="dialog-window">
 	<table class="titlebar">
