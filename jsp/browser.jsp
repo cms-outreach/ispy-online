@@ -1,4 +1,4 @@
-<%@ include file="../include/elab.jsp" %>
+<%@ include file="../jsp/elab.jsp" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.zip.*" %>

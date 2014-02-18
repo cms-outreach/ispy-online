@@ -1,4 +1,4 @@
-<script src="about.js"></script>
+<script src="../js/about.js"></script>
 
 <div id="about" class="dialog-window">
 	<table class="titlebar">

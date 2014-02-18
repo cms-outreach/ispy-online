@@ -1,4 +1,4 @@
-<script src="range-selection.js"></script>
+<script src="../js/range-selection.js"></script>
 
 <div id="range-selector" class="dialog-window">
 	<table class="titlebar">

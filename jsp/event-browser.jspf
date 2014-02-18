@@ -1,4 +1,4 @@
-<script src="event-browser.js"></script>
+<script src="../js/event-browser.js"></script>
 <div id="event-browser" class="dialog-window">
 	<table class="titlebar">
 		<tr>
