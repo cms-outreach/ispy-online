@@ -154,7 +154,7 @@ function browserRequest(name, paramStr, callback, data) {
     		}
     	}
     }
-    var url = "browser.jsp?op=" + name + "&param=" + paramStr;
+    var url = "jsp/browser.jsp?op=" + name + "&param=" + paramStr;
     log("url: <a href=\"" + url + "\">" + url + "</a>");
     ro.open("get", url);
     ro.onreadystatechange = cb;
