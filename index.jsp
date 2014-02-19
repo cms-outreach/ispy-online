@@ -64,6 +64,12 @@
 </table>
 <script src="./js/eventdisplay.js"></script>
 
+<script src="./js/about.js"></script>
+<script src="./js/event-browser.js"></script>
+<script src="./js/range-selection.js"></script>
+<script src="./js/settings.js"></script>
+<script src="./js/speed-test.js"></script>
+
 <%@ include file="./jsp/settings.jspf" %>
 <%@ include file="./jsp/range-selection.jspf" %>
 <%@ include file="./jsp/event-browser.jspf" %>

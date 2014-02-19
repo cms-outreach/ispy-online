@@ -1,5 +1,3 @@
-<script src="../js/range-selection.js"></script>
-
 <div id="range-selector" class="dialog-window">
 	<table class="titlebar">
 		<tr>

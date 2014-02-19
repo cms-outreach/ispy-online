@@ -1,5 +1,3 @@
-<script src="../js/speed-test.js"></script>
-
 <div id="test-zone">
 	<canvas id="test-canvas" width="320" height="200"></canvas>
 </div>
