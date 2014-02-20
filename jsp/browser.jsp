@@ -1,11 +1,9 @@
-<%@ include file="../jsp/elab.jsp" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.zip.*" %>
 <%
-	// alternatively set the data location manually for standalone use
-	String dataLocation = elab.getProperty("event.display.data.location");
-	//String dataLocation = "/home/mike/Desktop";
+	// Set the data location
+	String dataLocation = "/Users/mccauley/higgs-public-release";
 	String op = request.getParameter("op");
 	String param = request.getParameter("param");
 	
