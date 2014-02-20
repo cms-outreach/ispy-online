@@ -1,32 +1,20 @@
 <table id="toolbar">
 	<tr>
 		<td>
-			<a class="toolbar-button" onclick="showEventBrowser();">
+			<a class="toolbar-button" onclick="EVD.showEventBrowser();">
 				<img src="../graphics/open.png" title="Open"/>
 			</a>
 		</td>
-		<!--
-		<td>
-			<a class="toolbar-button" onclick="saveCanvasData();">
-				<img src="../graphics/document-save.png" title="Save This Event Display"/>
-			</a>
-		</td>
-		<td>
-			<a class="toolbar-button" onclick="renderCanvasData();">
-				<img src="../graphics/image-x-generic.png" title="Open Image in New Window"/>
-			</a>
-		</td>
-		-->
 		<td class="toolbar-separator">
 			&nbsp;
 		</td>
 		<td>
-			<a class="toolbar-button disabled" id="prev-event-button" onclick="prevEvent();">
+			<a class="toolbar-button disabled" id="prev-event-button" onclick="EVD.prevEvent();">
 				<img src="../graphics/prev-event.png" title="Previous Event"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button disabled" id="next-event-button" onclick="nextEvent();">
+			<a class="toolbar-button disabled" id="next-event-button" onclick="EVD.nextEvent();">
 				<img src="../graphics/next-event.png" title="Next Event"/>
 			</a>
 		</td>
@@ -35,17 +23,17 @@
 		</td>
 
 		<td>
-			<a class="toolbar-button" onclick="setCameraHome();">
+			<a class="toolbar-button" onclick="EVD.setCameraHome();">
 				<img src="../graphics/home.png" title="Return to Start View"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="zoom(1);">
+			<a class="toolbar-button" onclick="EVD.zoom(0.5);">
 				<img src="../graphics/zoom_in_24.png" title="Zoom In"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="zoom(-1);">
+			<a class="toolbar-button" onclick="EVD.zoom(-0.5);">
 				<img src="../graphics/zoom_out_24.png" title="Zoom Out"/>
 			</a>
 		</td>
@@ -54,17 +42,17 @@
 			&nbsp;
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="setCameraRotation(0, 0, 0);">
+			<a class="toolbar-button" onclick="EVD.setXY();">
 				<img src="../graphics/z-plane.png" title="X-Y Plane"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="setCameraRotation(0, Math.PI / 2, Math.PI / 2);">
+			<a class="toolbar-button" onclick="EVD.setZX();">
 				<img src="../graphics/y-plane.png" title="Z-X Plane"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="setCameraRotation(0, Math.PI / 2, 0);">
+			<a class="toolbar-button" onclick="setYZ();">
 				<img src="../graphics/x-plane.png" title="Y-Z Plane"/>
 			</a>
 		</td>
@@ -72,12 +60,12 @@
 			&nbsp;
 		</td>
 		<td>
-			<a class="toolbar-button" id="perspective-view" onclick="setPerspectiveProjection(true);">
+			<a class="toolbar-button" id="perspective-view" onclick="EVD.setPerspective();">
 				<img src="../graphics/perspective-projection.png" title="Perspective View"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button" id="orthographic-view" onclick="setPerspectiveProjection(false);">
+			<a class="toolbar-button" id="orthographic-view" onclick="EVD.setOrthographic();">
 				<img src="../graphics/orthographic-projection.png" title="Orthographic View"/>
 			</a>
 		</td>
@@ -85,7 +73,7 @@
 			&nbsp;
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="showSettings();">
+			<a class="toolbar-button" onclick="EVD.showSettings();">
 				<img src="../graphics/settings.png" title="Settings"/>
 			</a>
 		</td>
@@ -93,7 +81,7 @@
 			&nbsp;
 		</td>
 		<td>
-			<a class="toolbar-button" id="help" onclick="openAboutWindow();">
+			<a class="toolbar-button" id="help" onclick="EVD.openAboutWindow();">
 				<img src="../graphics/help2.png" title="About"/>
 			</a>
 		</td>

@@ -1,969 +1,766 @@
-function makePoint(array) {
-	return {x: array[0], y: array[1], z: array[2]};
-}
-
-function makePoint2(x, y, z) {
-	return {x: x, y: y, z: z};
-}
-
-function addPoints(p1, p2) {
-	return {x: p1.x + p2.x, y: p1.y + p2.y, z: p1.z + p2.z};
-}
-
-function subPoints(p1, p2) {
-	return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z};
-}
-
-function add(a1, a2) {
-	return [a1[0] + a2[0], a1[1] + a2[1], a1[2] + a2[2]];
-}
-
-function makeColor(base, opacity) {
-	return new Pre3d.RGBA(base[0], base[1], base[2], base[3] * opacity);
-}
-
-function distance(p1, p2) {
-	var dx = p1.x - p2.x;
-	var dy = p1.y - p2.y;
-	var dz = p1.z - p2.z;
-	return Math.sqrt(dx * dx + dy * dy + dz * dz);
-}
-
-function pointToStr(p) {
-	if (p === null) {
-		return "null";
-	}
-	return "x: " + p.x + ", y: " + p.y + ", z: " + p.z;
-}
-
-function affineToStr(m) {
-	  return "[[" + m.e0 + ", " + m.e1 + ", " + m.e2  + ", " + m.e3  + "], " + 
-	  		  "[" + m.e4 + ", " + m.e5 + ", " + m.e6  + ", " + m.e7  + "], " + 
-	  		  "[" + m.e8 + ", " + m.e9 + ", " + m.e10 + ", " + m.e11 + "]]";
-}
-
-function makeScaledArrow(x1, y1, z1, x2, y2, z2, slices) {
-  //tpm  In the pre3d makeSolidArrow method the length of the 
-  // arrow is hard-coded (despite what one gives as arguments).
-  // Therefore for now clone that method here with modifications.
-
-  var s = new Pre3d.Shape();
-  //just make an arrow in the X direction and then scale and rotate
-	  
-  var dx = x2 - x1;
-  var dy = y2 - y1;
-  var dz = z2 - z1;
-  
-  //tpm Scaling doesn't seem to work in pre3d makeSolidArrow method 
-  // No doubt that's why the length is hard-coded.
-  // Therefore here make the default 1.0 and add log10
-  // of the scale (therefore if it's a unit vector the arrow is 1.0;
-  // also it keeps the length from getting too long)
-  var scale = Math.sqrt(dx*dx+dy*dy+dz*dz);
-
-  var v = [];
-  var stemRadius = 0.03;
-  var stemLength = 0.1*scale;
-  var headRadius = 0.15;
-  var headLength = 0.25;
-  //origin
-  v.push({x: 0, y: 0, z: 0});
-  //stem
-  for (var i = 0; i < slices; i++) {
-    var angle = 2 * Math.PI / slices;
-    v.push({x: 0, y: stemRadius * Math.sin(i * angle), z: stemRadius * Math.cos(i * angle)});
-  }
-  //stem - other side
-  for (var i = 0; i < slices; i++) {
-    var angle = 2 * Math.PI / slices;
-    v.push({x: stemLength, y: stemRadius * Math.sin(i * angle), z: stemRadius * Math.cos(i * angle)});
-  }
-  // head - base
-  for (var i = 0; i < slices; i++) {
-    var angle = 2 * Math.PI / slices;
-    v.push({x: stemLength, y: headRadius * Math.sin(i * angle), z: headRadius * Math.cos(i * angle)});
-  }
-  // tip
-  v.push({x: stemLength + headLength, y: 0, z: 0});
-  
-  //scale and rotate vertices
-  var t = new Pre3d.Transform();
-  //tpm this scale doesn't seem to work
-  //t.scale(10.0);
-	           
-  //tpm By definition MET does not have a component in
-  // Z so we only care about phi. Of course, this isn't true 
-  // for other objects that may use this method so
-  // caveat emptor!
-  var phi = Math.atan2(dy, dx);	 
-  t.rotateZ(phi);
-
-  s.vertices = [];
-  for (var i = 0; i < v.length; i++) {
-    s.vertices.push(t.transformPoint(v[i]));
-  }
-	  
-  var q = [];
-  //stem base
-  for (var i = 0; i < slices; i++) {
-    q.push(new Pre3d.QuadFace(0, i + 1, ((i + 1) % slices) + 1, null));
-  }
-  //stem side
-  for (var i = 0; i < slices; i++) {
-    var ip1 = (i + 1) % slices;
-    q.push(new Pre3d.QuadFace(i + slices + 1, ip1 + slices + 1, ip1 + 1, i + 1));
-  }
-  //head base
-  for (var i = 0; i < slices; i++) {
-    var ip1 = (i + 1) % slices;
-    q.push(new Pre3d.QuadFace(i + 2 * slices + 1, ip1 + 2 * slices + 1, ip1 + slices + 1, i + slices + 1));
-  }
-  //head side
-  var last = 1 + slices * 3;
-  for (var i = 0; i < slices; i++) {
-    var ip1 = (i + 1) % slices;
-    q.push(new Pre3d.QuadFace(last, ip1 + 2 * slices + 1, i + 2 * slices + 1, null));
-  }
-  s.quads = q;
-	  
-  Pre3d.ShapeUtils.rebuildMeta(s);
-  return s;
-}
-
-function makeMET(data) {    
-    //"METs_V1": [["phi", "double"],["pt", "double"],["px", "double"],["py", "double"],["pz", "double"]]
+EVD.makeMET = function(data, descr) {    
+    /*
+      "METs_V1": [["phi", "double"],["pt", "double"],["px", "double"],["py", "double"],["pz", "double"]]
+    */
     var pt = data[1];
     var px = data[2];
     var py = data[3];
 
-    var arrow = makeScaledArrow(0, 0, 0, px, py, 0, 10);
-    arrow.fillColor = new Pre3d.RGBA(1, 1, 0, 1);
-    Pre3d.ShapeUtils.rebuildMeta(arrow);
-    return arrow;
+    var dir = new THREE.Vector3(px,py,0);
+    dir.normalize();
+
+    var color = new THREE.Color();
+    color.setRGB(descr.color[0], descr.color[1], descr.color[2]);
+
+    // dir, origin, length, hex, headLength, headWidth
+    var origin = new THREE.Vector3(0,0,0);
+    var length = pt*0.1;
+ 
+    var met = new THREE.ArrowHelper(dir,origin,length,color.getHex(),0.25,0.15);
+    met.name = descr.name;
+    met.visible = descr.on;
+
+    return [met];
 }
 
-function makeTrack(data) {
-	log("makeTrack(" + data + ")");
-	return {p1: makePoint(data[0]), p2: makePoint(add(data[0], data[1]))};
-}
+EVD.makeJet = function(data, descr) {
+  var et = data[0];
+  var theta = data[2];
+  var phi = data[3];
 
-function makeHit(data) {
-	return makePoint(data[0]);
-}
+  var ct = Math.cos(theta);
+  var st = Math.sin(theta);
 
-function makeSiStripDigis(data) {
-	return makePoint(data[1]);
-}
+  var maxZ = 4.0;
+  var maxR = 2.0;
 
-function makeCSCWD(data) {
-	//[pos:p3d, len:num, ...]
-	var crds = data[0];
-	//this looks like a "line" tangent to a circle on the detector axis
-	var x = crds[0];
-	var y = crds[1];
-	var z = crds[2];
-	var l = data[1];
-	var da = Math.sqrt(x * x + y * y);
-	var sc = l / da / 2;
-	var dx = x * sc;
-	var dy = y * sc;
-	 
-	return {p1: makePoint2(x - dy, y + dx, z), p2: makePoint2(x + dy, y - dx, z)};
-}
+  var length1 = ct ? maxZ / Math.abs(ct) : maxZ;
+  var length2 = st ? maxR / Math.abs(st) : maxR;
+  var length = length1 < length2 ? length1 : length2;
+  var radius = 0.3 * (1.0 /(1 + 0.001));
 
-function makeCSCSD(data) {
-	//[pos:p3d, len:num, ...]
-	var crds = data[0];
-	//radial to detector axis
-	var x = crds[0];
-	var y = crds[1];
-	var z = crds[2];
-	var l = data[1];
-	var da = Math.sqrt(x * x + y * y);
-	var sc = l / da / 2;
-	var dx = x * sc;
-	var dy = y * sc;
-	 
-	return {p1: makePoint2(x - dx, y - dy, z), p2: makePoint2(x + dx, y + dy, z)};
-}
+  var geometry = new THREE.CylinderGeometry();
+  geometry.radiusTop = radius;
+  geometry.radiusBottom = 0.0;
+  geometry.height = length;
+  geometry.openEnded = true;
 
-function makeCSCSegments(data) {
-	return {p1: makePoint(data[1]), p2: makePoint(data[2])};
-}
-
-function makeQuad(f1, f2, f3, f4, b1, b2, b3, b4, fill, stroke) {
-	var s = new Pre3d.Shape();
-    s.vertices = [
-      f1, f2, f3, f4, b1, b2, b3, b4
-    ];
-
-    //    4 -- 0
-    //   /|   /|     +y
-    //  5 -- 1 |      |__ +x
-    //  | 7 -|-3     /
-    //  |/   |/    +z
-    //  6 -- 2
-
-    s.quads = [
-      new Pre3d.QuadFace(0, 1, 2, 3),  // Front
-      new Pre3d.QuadFace(4, 5, 6, 7),  // Back
-    ];
-    if (document.settings.calorimeterTowersWireSides) {
-    	// much faster to draw lines instead of the 4 faces
-    	s.lines = [{v1: 0, v2: 4}, {v1: 1, v2: 5}, {v1: 2, v2: 6}, {v1: 3, v2: 7}];
-    }
-    else {
-	    s.quads.push(new Pre3d.QuadFace(0, 1, 5, 4));
-	    s.quads.push(new Pre3d.QuadFace(2, 3, 7, 6));
-	    s.quads.push(new Pre3d.QuadFace(1, 2, 6, 5));
-	    s.quads.push(new Pre3d.QuadFace(0, 4, 7, 3));
-    }
-    
-    s.fillColor = fill;
-    s.strokeColor = stroke;
-
-    Pre3d.ShapeUtils.rebuildMeta(s);
-    return s;
-}
-
-function makeChambers(data) {
-
-  // ["detid", "int"],
-  // ["front_1", "v3d"],["front_2", "v3d"],["front_3", "v3d"],["front_4", "v3d"],
-  // ["back_1", "v3d"],["back_2", "v3d"],["back_3", "v3d"],["back_4", "v3d"]
-
-  //    5 -- 4
-  //   /|   /|     
-  //  1 -- 0 |      
-  //  | 6 -|-7     
-  //  |/   |/    
-  //  2 -- 3
-
-  // add +1 to indices since points dont' start from 0
-
-  return [
-    {p1: makePoint(data[2]), p2: makePoint(data[3])}, 
-    {p1: makePoint(data[1]), p2: makePoint(data[4])}, 
-    {p1: makePoint(data[6]), p2: makePoint(data[7])},
-    {p1: makePoint(data[5]), p2: makePoint(data[8])},
-          
-    {p1: makePoint(data[2]), p2: makePoint(data[6])}, 
-    {p1: makePoint(data[1]), p2: makePoint(data[5])}, 
-    {p1: makePoint(data[3]), p2: makePoint(data[7])},
-    {p1: makePoint(data[4]), p2: makePoint(data[8])},
-
-    {p1: makePoint(data[1]), p2: makePoint(data[2])}, 
-    {p1: makePoint(data[3]), p2: makePoint(data[4])}, 
-    {p1: makePoint(data[5]), p2: makePoint(data[6])},
-    {p1: makePoint(data[7]), p2: makePoint(data[8])}
-  ];
-}
-
-function makeTowers(data, rd, descr, front, back, energy) {
-  var settings = document.settings;
+  geometry.position = new THREE.Vector3(0,0,0);
   
-  if (settings.calorimeterTowers) {
-    if (!energy) {
-      energy = getRankValue(data, rd);
-    }
-    if (energy < 0) {
-      return null; // Java and Javascript should have a WTF constant, with a different meaning than NaN.
-    }
-		
-    var len;
-    if (settings.calorimeterTowersLogScale) {
-      len = Math.log(energy) * settings.calorimeterTowersLogFactor;
-    }
-    else {
-    	if ( descr.group === "ECAL" ) {
-    		len = energy / rd.range * document.settings.ecalHitsMaxSize;
-    	} else if ( descr.group === "HCAL" ) {
-    		len = energy / rd.range * document.settings.hcalHitsMaxSize; 
-    	} else {
-	      len = energy / rd.range * document.settings.calorimeterTowersMaxLength;
-	  	}
-    }
-		
-    var superFront = new Array();
-    
-    for (var i = 0; i < 4; i++) {
-      superFront.push(Pre3d.Math.linearInterpolatePoints3d(front[i], back[i], len));
-    }
-    
-    back = superFront;
-    
-    var a; 
+  var mcolor = new THREE.Color();
+  mcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
 
-    if ( descr.group === "ECAL" ) {
-    	a = settings.ecalHitsWireSides ? 1.0 : 0.3;
-    } else if ( descr.group === "HCAL" ) {
-    	a = settings.hcalHitsWireSides ? 1.0 : 0.3;
-    } else { 
-    	a = settings.calorimeterTowersWireSides ? 1.0 : 0.3;
-	}    
+  var material = new THREE.MeshBasicMaterial({color:mcolor, opacity:descr.color[3]});
+  material.side = THREE.DoubleSide;
 
-    var shape = makeQuad(front[0], front[1], front[2], front[3],
-      back[0], back[1], back[2], back[3], 
-      makeColor(descr.fill, a),
-      makeColor(descr.color, a));
-    shape.drawOverdraw = true;
-    return shape;
-	}
-  else {
-    return makeQuad(front[0], front[1], front[2], front[3],
-		    back[0], back[1], back[2], back[3], 
-		    makeColor(descr.fill, getRankValue(data, rd) * 0.8 + 0.2),
-		    makeColor(descr.color, getRankValue(data, rd) * 0.8 + 0.2));
+  var jet = new THREE.Mesh(geometry, material);
+  jet.name = descr.key;
+  jet.visible = descr.on;
+
+  return [jet];
+}
+
+EVD.makeRecHit_V2 = function(data, descr) {
+  var energy = data[0];
+  if ( energy > 0.5 ) {
+    return EVD.makeScaledSolidBox(data, descr, 5, descr.scale*energy);
+    //return EVD.makeScaledWireframeBox(data, descr, descr.scale);
   }
 }
 
-function makeRecHits(data, rd, descr, cindex) {
-  /*
-    in V2 ["time", "double"] is added before detid.
-          ["energy", "double"],["eta", "double"],["phi", "double"],["detid", "int"],
-          ["front_1", "v3d"],["front_2", "v3d"],["front_3", "v3d"],["front_4", "v3d"],["back_1", "v3d"],["back_2", "v3d"],["back_3", "v3d"],["back_4", "v3d"]
-  */
+EVD.makeCSC = function(data, descr) {
+  return EVD.makeWireframeBox(data, descr, 1);
+}
 
-  var front = new Array();
-  var back = new Array();
+EVD.makeDT = function(data, descr) {
+  return EVD.makeWireframeBox(data, descr, 1);
+}
+
+EVD.makeMuonChamber = function(data, descr) {
+  return EVD.makeWireframeBox(data, descr, 1);
+}
+
+EVD.makeSolidBox = function(data, descr, ci) {
+  var f1 = new THREE.Vector3(data[ci][0],   data[ci][1],   data[ci][2]);
+  var f2 = new THREE.Vector3(data[ci+1][0], data[ci+1][1], data[ci+1][2]);
+  var f3 = new THREE.Vector3(data[ci+2][0], data[ci+2][1], data[ci+2][2]);
+  var f4 = new THREE.Vector3(data[ci+3][0], data[ci+3][1], data[ci+3][2]);
+                  
+  var b1 = new THREE.Vector3(data[ci+4][0], data[ci+4][1], data[ci+4][2]);
+  var b2 = new THREE.Vector3(data[ci+5][0], data[ci+5][1], data[ci+5][2]);
+  var b3 = new THREE.Vector3(data[ci+6][0], data[ci+6][1], data[ci+6][2]);
+  var b4 = new THREE.Vector3(data[ci+7][0], data[ci+7][1], data[ci+7][2]);
+
+  var front = new THREE.Geometry();
+
+  front.vertices.push(f1);
+  front.vertices.push(f2);
+  front.vertices.push(f3);
+  front.vertices.push(f4);
+
+  front.faces.push(new THREE.Face3(0,1,2));
+  front.faces.push(new THREE.Face3(0,2,3));
+
+  front.computeCentroids();
+  front.computeFaceNormals();
+  front.computeVertexNormals();
+
+  var back = new THREE.Geometry();
+
+  back.vertices.push(b1);
+  back.vertices.push(b2);
+  back.vertices.push(b3);
+  back.vertices.push(b4);
+
+  back.faces.push(new THREE.Face3(0,1,2));
+  back.faces.push(new THREE.Face3(0,2,3));
   
-  front.push(makePoint(data[cindex + 0]));
-  front.push(makePoint(data[cindex + 1]));
-  front.push(makePoint(data[cindex + 2]));
-  front.push(makePoint(data[cindex + 3]));
-  back.push(makePoint(data[cindex + 4]));
-  back.push(makePoint(data[cindex + 5]));
-  back.push(makePoint(data[cindex + 6]));
-  back.push(makePoint(data[cindex + 7]));
+  back.computeCentroids();
+  back.computeFaceNormals();
+  back.computeVertexNormals();
 
-  return makeTowers(data, rd, descr, front, back, data[0]);
+  var top = new THREE.Geometry();
+
+  top.vertices.push(f1);
+  top.vertices.push(b1);
+  top.vertices.push(b2);
+  top.vertices.push(f2);
+
+  top.faces.push(new THREE.Face3(0,1,2));
+  top.faces.push(new THREE.Face3(0,2,3));
+  
+  top.computeCentroids();
+  top.computeFaceNormals();
+  top.computeVertexNormals();
+
+  var bottom = new THREE.Geometry();
+
+  bottom.vertices.push(f4);
+  bottom.vertices.push(b4);
+  bottom.vertices.push(b3);
+  bottom.vertices.push(f3);
+
+  bottom.faces.push(new THREE.Face3(0,1,2));
+  bottom.faces.push(new THREE.Face3(0,2,3));
+  
+  bottom.computeCentroids();
+  bottom.computeFaceNormals();
+  bottom.computeVertexNormals();
+
+  var left = new THREE.Geometry();
+
+  left.vertices.push(f2);
+  left.vertices.push(b2);
+  left.vertices.push(b3);
+  left.vertices.push(f3);
+
+  left.faces.push(new THREE.Face3(0,1,2));
+  left.faces.push(new THREE.Face3(0,2,3));
+  
+  left.computeCentroids();
+  left.computeFaceNormals();
+  left.computeVertexNormals();
+
+  var right = new THREE.Geometry();
+
+  right.vertices.push(f1);
+  right.vertices.push(b1);
+  right.vertices.push(b4);
+  right.vertices.push(f4);
+
+  right.faces.push(new THREE.Face3(0,1,2));
+  right.faces.push(new THREE.Face3(0,2,3));
+  
+  right.computeCentroids();
+  right.computeFaceNormals();
+  right.computeVertexNormals();
+
+  var wfcolor = new THREE.Color();
+  wfcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var material = new THREE.MeshBasicMaterial({color:wfcolor, 
+                                              opacity:descr.color[3]});
+  
+  material.side = THREE.DoubleSide;
+
+  var fr = new THREE.Mesh(front, material);
+  fr.name = descr.key;
+  fr.visible = descr.on;
+
+  var bk = new THREE.Mesh(back, material);
+  bk.name = descr.key;
+  bk.visible = descr.on;
+
+  var tp = new THREE.Mesh(top, material);
+  tp.name = descr.key;
+  tp.visible = descr.on;
+
+  var bm = new THREE.Mesh(bottom, material);
+  bm.name = descr.key;
+  bm.visible = descr.on;
+
+  var lf = new THREE.Mesh(left, material);
+  lf.name = descr.key;
+  lf.visible = descr.on;
+
+  var rt = new THREE.Mesh(right, material);
+  rt.name = descr.key;
+  rt.visible = descr.on;
+
+  return [fr,bk,tp,bm,lf,rt];
 }
 
-function makeRecHits_V1(data, rd, descr) {
-	return makeRecHits(data, rd, descr, 4);
+EVD.makeScaledSolidBox = function(data, descr, ci, scale) {
+  var f1 = new THREE.Vector3(data[ci][0],   data[ci][1],   data[ci][2]);
+  var f2 = new THREE.Vector3(data[ci+1][0], data[ci+1][1], data[ci+1][2]);
+  var f3 = new THREE.Vector3(data[ci+2][0], data[ci+2][1], data[ci+2][2]);
+  var f4 = new THREE.Vector3(data[ci+3][0], data[ci+3][1], data[ci+3][2]);
+                  
+  var b1 = new THREE.Vector3(data[ci+4][0], data[ci+4][1], data[ci+4][2]);
+  var b2 = new THREE.Vector3(data[ci+5][0], data[ci+5][1], data[ci+5][2]);
+  var b3 = new THREE.Vector3(data[ci+6][0], data[ci+6][1], data[ci+6][2]);
+  var b4 = new THREE.Vector3(data[ci+7][0], data[ci+7][1], data[ci+7][2]);
+
+  var front = new THREE.Geometry();
+
+  front.vertices.push(f1);
+  front.vertices.push(f2);
+  front.vertices.push(f3);
+  front.vertices.push(f4);
+
+  front.faces.push(new THREE.Face3(0,1,2));
+  front.faces.push(new THREE.Face3(0,2,3));
+
+  front.computeCentroids();
+  front.computeFaceNormals();
+  front.computeVertexNormals();
+
+  b1.sub(f1);
+  b2.sub(f2);
+  b3.sub(f3);
+  b4.sub(f4);
+
+  b1.normalize();
+  b2.normalize();
+  b3.normalize();
+  b4.normalize();
+
+  b1.multiplyScalar(scale); 
+  b2.multiplyScalar(scale);
+  b3.multiplyScalar(scale);
+  b4.multiplyScalar(scale);
+
+  b1.addVectors(f1,b1);
+  b2.addVectors(f2,b2);
+  b3.addVectors(f3,b3);
+  b4.addVectors(f4,b4);
+
+  var back = new THREE.Geometry();
+
+  back.vertices.push(b1);
+  back.vertices.push(b2);
+  back.vertices.push(b3);
+  back.vertices.push(b4);
+
+  back.faces.push(new THREE.Face3(0,1,2));
+  back.faces.push(new THREE.Face3(0,2,3));
+  
+  back.computeCentroids();
+  back.computeFaceNormals();
+  back.computeVertexNormals();
+
+  var top = new THREE.Geometry();
+
+  top.vertices.push(b1);
+  top.vertices.push(b2);
+  top.vertices.push(f2);
+  top.vertices.push(f1);
+
+  top.faces.push(new THREE.Face3(0,1,2));
+  top.faces.push(new THREE.Face3(0,2,3));
+  
+  top.computeCentroids();
+  top.computeFaceNormals();
+  top.computeVertexNormals();
+
+  var bottom = new THREE.Geometry();
+
+  bottom.vertices.push(f3);
+  bottom.vertices.push(b3);
+  bottom.vertices.push(b4);
+  bottom.vertices.push(f4);
+
+  bottom.faces.push(new THREE.Face3(0,1,2));
+  bottom.faces.push(new THREE.Face3(0,2,3));
+  
+  bottom.computeCentroids();
+  bottom.computeFaceNormals();
+  bottom.computeVertexNormals();
+
+  var left = new THREE.Geometry();
+
+  left.vertices.push(f2);
+  left.vertices.push(b2);
+  left.vertices.push(b3);
+  left.vertices.push(f3);
+
+  left.faces.push(new THREE.Face3(0,1,2));
+  left.faces.push(new THREE.Face3(0,2,3));
+  
+  left.computeCentroids();
+  left.computeFaceNormals();
+  left.computeVertexNormals();
+
+  var right = new THREE.Geometry();
+
+  right.vertices.push(b1);
+  right.vertices.push(f1);
+  right.vertices.push(f4);
+  right.vertices.push(b4);
+
+  right.faces.push(new THREE.Face3(0,1,2));
+  right.faces.push(new THREE.Face3(0,2,3));
+  
+  right.computeCentroids();
+  right.computeFaceNormals();
+  right.computeVertexNormals();
+
+  var mcolor = new THREE.Color();
+  mcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var material = new THREE.MeshBasicMaterial({color:mcolor, 
+                                              opacity:descr.color[3]});
+  material.side = THREE.DoubleSide;
+  
+  var fr = new THREE.Mesh(front, material);
+  fr.name = descr.key;
+  fr.visible = descr.on;
+
+  var bk = new THREE.Mesh(back, material);
+  bk.name = descr.key;
+  bk.visible = descr.on;
+
+  var tp = new THREE.Mesh(top, material);
+  tp.name = descr.key;
+  tp.visible = descr.on;
+
+  var bm = new THREE.Mesh(bottom, material);
+  bm.name = descr.key;
+  bm.visible = descr.on;
+
+  var lf = new THREE.Mesh(left, material);
+  lf.name = descr.key;
+  lf.visible = descr.on;
+
+  var rt = new THREE.Mesh(right, material);
+  rt.name = descr.key;
+  rt.visible = descr.on;
+
+  return [fr,bk,tp, bm,lf,rt];
 }
 
-function makeRecHits_V2(data, rd, descr) {
-	return makeRecHits(data, rd, descr, 5);
+EVD.makeWireframeBox = function(data, descr, ci) {
+	var f1 = new THREE.Vector3(data[ci][0],   data[ci][1],   data[ci][2]);
+  var f2 = new THREE.Vector3(data[ci+1][0], data[ci+1][1], data[ci+1][2]);
+  var f3 = new THREE.Vector3(data[ci+2][0], data[ci+2][1], data[ci+2][2]);
+  var f4 = new THREE.Vector3(data[ci+3][0], data[ci+3][1], data[ci+3][2]);
+                  
+  var b1 = new THREE.Vector3(data[ci+4][0], data[ci+4][1], data[ci+4][2]);
+  var b2 = new THREE.Vector3(data[ci+5][0], data[ci+5][1], data[ci+5][2]);
+  var b3 = new THREE.Vector3(data[ci+6][0], data[ci+6][1], data[ci+6][2]);
+  var b4 = new THREE.Vector3(data[ci+7][0], data[ci+7][1], data[ci+7][2]);
+
+  var wfcolor = new THREE.Color();
+  wfcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var material = new THREE.LineBasicMaterial({color:wfcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+   	
+  var front = new THREE.Geometry();
+  front.vertices.push(f1);
+  front.vertices.push(f2);
+	front.vertices.push(f3);
+	front.vertices.push(f4);
+	front.vertices.push(f1);
+
+	var back = new THREE.Geometry();
+  back.vertices.push(b1);
+	back.vertices.push(b2);
+	back.vertices.push(b3);
+	back.vertices.push(b4);
+  back.vertices.push(b1);
+
+  var s1 = new THREE.Geometry();
+  s1.vertices.push(f1);
+  s1.vertices.push(b1);
+
+  var s2 = new THREE.Geometry();
+  s2.vertices.push(f2);
+  s2.vertices.push(b2);
+
+  var s3 = new THREE.Geometry();
+  s3.vertices.push(f3);
+  s3.vertices.push(b3);
+
+  var s4 = new THREE.Geometry();
+  s4.vertices.push(f4);
+  s4.vertices.push(b4);
+
+  var box = [new THREE.Line(front,material), 
+             new THREE.Line(back,material), 
+             new THREE.Line(s1,material), 
+             new THREE.Line(s2,material), 
+             new THREE.Line(s3,material), 
+             new THREE.Line(s4,material)];
+  
+  box.forEach(function(l) {
+    l.name = descr.key;
+    l.visible = descr.on;
+  });
+
+  return box;
 }
 
-var cnt = 0;
-function makeDetectorPiece(data, rd, descr) {
-	//["detid", "int"],
-	//["front_1", "v3d"],["front_2", "v3d"],["front_3", "v3d"],["front_4", "v3d"],["back_1", "v3d"],["back_2", "v3d"],["back_3", "v3d"],["back_4", "v3d"]
-	var front = new Array();
-	var back = new Array();
-	front.push(makePoint(data[0]));
-	front.push(makePoint(data[1]));
-	front.push(makePoint(data[2]));
-	front.push(makePoint(data[3]));
-	back.push(makePoint(data[4]));
-	back.push(makePoint(data[5]));
-	back.push(makePoint(data[6]));
-	back.push(makePoint(data[7]));
-	return [{p1: front[0], p2: front[1]}, {p1: front[1], p2: front[2]}, {p1: front[2], p2: front[3]}];
+EVD.makeScaledWireframeBox = function(data, descr, ci, scale) {
+  var f1 = new THREE.Vector3(data[ci][0],   data[ci][1],   data[ci][2]);
+  var f2 = new THREE.Vector3(data[ci+1][0], data[ci+1][1], data[ci+1][2]);
+  var f3 = new THREE.Vector3(data[ci+2][0], data[ci+2][1], data[ci+2][2]);
+  var f4 = new THREE.Vector3(data[ci+3][0], data[ci+3][1], data[ci+3][2]);
+                  
+  var b1 = new THREE.Vector3(data[ci+4][0], data[ci+4][1], data[ci+4][2]);
+  var b2 = new THREE.Vector3(data[ci+5][0], data[ci+5][1], data[ci+5][2]);
+  var b3 = new THREE.Vector3(data[ci+6][0], data[ci+6][1], data[ci+6][2]);
+  var b4 = new THREE.Vector3(data[ci+7][0], data[ci+7][1], data[ci+7][2]);
+
+  b1.sub(f1);
+  b2.sub(f2);
+  b3.sub(f3);
+  b4.sub(f4);
+
+  b1.normalize();
+  b2.normalize();
+  b3.normalize();
+  b4.normalize();
+
+  b1.multiplyScalar(scale); 
+  b2.multiplyScalar(scale);
+  b3.multiplyScalar(scale);
+  b4.multiplyScalar(scale);
+
+  b1.addVectors(f1,b1);
+  b2.addVectors(f2,b2);
+  b3.addVectors(f3,b3);
+  b4.addVectors(f4,b4);
+
+  var wfcolor = new THREE.Color();
+  wfcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var material = new THREE.LineBasicMaterial({color:wfcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+
+  var front = new THREE.Geometry();
+  front.vertices.push(f1);
+  front.vertices.push(f2);
+  front.vertices.push(f3);
+  front.vertices.push(f4);
+  front.vertices.push(f1);
+
+  var back = new THREE.Geometry();
+  back.vertices.push(b1);
+  back.vertices.push(b2);
+  back.vertices.push(b3);
+  back.vertices.push(b4);
+  back.vertices.push(b1);
+
+  var s1 = new THREE.Geometry();
+  s1.vertices.push(f1);
+  s1.vertices.push(b1);
+
+  var s2 = new THREE.Geometry();
+  s2.vertices.push(f2);
+  s2.vertices.push(b2);
+
+  var s3 = new THREE.Geometry();
+  s3.vertices.push(f3);
+  s3.vertices.push(b3);
+
+  var s4 = new THREE.Geometry();
+  s4.vertices.push(f4);
+  s4.vertices.push(b4);
+
+  var box = [new THREE.Line(front,material), 
+             new THREE.Line(back,material), 
+             new THREE.Line(s1,material), 
+             new THREE.Line(s2,material), 
+             new THREE.Line(s3,material), 
+             new THREE.Line(s4,material)];
+  
+  box.forEach(function(l) {
+    l.name = descr.key;
+    l.visible = descr.on;
+  });
+
+  return box;
 }
 
-function makeSimpleDetectorPiece(data, rd, descr) {
-	//subdiv, p1...p4
-	var p1 = makePoint(data[0]);
-	var p2 = makePoint(data[1]);
-	var p3 = makePoint(data[2]);
-	var p4 = makePoint(data[3]);
-	return [p1, p2, p3, p4];
+EVD.makeDTRecHits = function(data, descr) {
+  /*
+    ["wireId", "int"],["layerId", "int"],["superLayerId", "int"],["sectorId", "int"],["stationId", "int"],["wheelId", "int"],
+    ["digitime", "double"],["wirePos", "v3d"],
+    ["lPlusGlobalPos", "v3d"],["lMinusGlobalPos", "v3d"],["rPlusGlobalPos", "v3d"],["rMinusGlobalPos", "v3d"],
+    ["lGlobalPos", "v3d"],["rGlobalPos", "v3d"],
+    ["axis", "v3d"],["angle", "double"],["cellWidth", "double"],["cellLength", "double"],["cellHeight", "double"]]
+  */
+  var lcolor = new THREE.Color();
+  lcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var material = new THREE.LineBasicMaterial({color:lcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+
+  var pos = new THREE.Vector3(data[7][0], data[7][1], data[7][2]);
+  var axis = new THREE.Vector3(data[14][0], data[14][1], data[14][2]);
+  var angle = data[15];
+  var len = data[17];
+
+  var p1 = new THREE.Vector3(0, -len/2, 0);
+  var p2 = new THREE.Vector3(0, len/2, 0);
+
+  //console.log(p1,p2);
+
+  p1.applyAxisAngle(axis, angle);
+  p2.applyAxisAngle(axis, angle);
+
+  //console.log(p1,p2);
+
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(pos.add(p1));
+  geometry.vertices.push(pos.add(p2));
+
+  var line = new THREE.Line(geometry, material);
+  line.name = descr.key;
+  line.visible = descr.on;
+
+  //console.log(line);
+
+  return [line];
 }
 
-function makeWireframe(data, rd, descr) {
-	var points = data[0];
-	var lines = data[1];
-	var wp = [];
-	var wl = [];
-	
-	for (var i = 0; i < points.length; i++) {
-		wp.push(makePoint(points[i]));
-	}
-	for (var i = 0; i < lines.length; i++) {
-		wl.push({p1: lines[i][0], p2: lines[i][1]});
-	}
-	
-	var w = new Pre3d.Wireframe();
-	w.points = wp;
-	w.lines = wl;
-	
-	return [w];
+EVD.makeDTRecSegments = function(data, descr) {
+  var lcolor = new THREE.Color();
+  lcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var material = new THREE.LineBasicMaterial({color:lcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+
+  //console.log(data[1],data[2]);
+
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(new THREE.Vector3(data[1][0], data[1][1], data[1][2]));
+  geometry.vertices.push(new THREE.Vector3(data[2][0], data[2][1], data[2][2]));
+
+  var line = new THREE.Line(geometry, material);
+  line.name = descr.key;
+  line.visible = descr.on;
+
+  //console.log(line);
+
+  return [line];
 }
 
-function makeSimpleRecHits(data, rd, descr, findex) {
-	var s = new Pre3d.Shape();
-    s.vertices = [makePoint(data[findex + 0]), makePoint(data[findex + 1]), makePoint(data[findex + 2]), makePoint(data[findex + 3])];
-    s.quads = [new Pre3d.QuadFace(0, 1, 2, 3)];
-    s.fillColor = makeColor(descr.fill, getRankValue(data, rd) * 0.5 + 0.5);
-    s.strokeColor = makeColor(descr.color, getRankValue(data, rd) * 0.5 + 0.5);
-    s.ambientLight = 1;
+EVD.makeRPCRecHits = function(data, descr) {
+  var lcolor = new THREE.Color();
+  lcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
 
-    Pre3d.ShapeUtils.rebuildMeta(s);
-    return s;
+  var material = new THREE.LineBasicMaterial({color:lcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+
+  var g1 = new THREE.Geometry();
+  g1.vertices.push(new THREE.Vector3(data[0][0], data[0][1], data[0][2]));
+  g1.vertices.push(new THREE.Vector3(data[1][0], data[1][1], data[1][2]));
+
+  var g2 = new THREE.Geometry();
+  g2.vertices.push(new THREE.Vector3(data[2][0], data[2][1], data[2][2]));
+  g2.vertices.push(new THREE.Vector3(data[3][0], data[3][1], data[3][2]));
+  
+  var g3 = new THREE.Geometry();
+  g3.vertices.push(new THREE.Vector3(data[4][0], data[4][1], data[4][2]));
+  g3.vertices.push(new THREE.Vector3(data[5][0], data[5][1], data[5][2]));
+
+  var lines = [new THREE.Line(g1,material), new THREE.Line(g2,material), new THREE.Line(g3,material)];
+
+  lines.forEach(function(l) {
+    l.name = descr.key;
+    l.visible = descr.on;
+  })
+
+  return lines;
 }
 
-function makeSimpleRecHits_V1(data, rd, descr) {
-	return makeSimpleRecHits(data, rd, descr, 4);
+EVD.makeCSCSegments = function(data, descr) {
+  return EVD.makeDTRecSegments(data, descr);
 }
 
-function makeSimpleRecHits_V2(data, rd, descr) {
-	return makeSimpleRecHits(data, rd, descr, 5);
+EVD.makeCSCRecHit2Ds_V2 = function(data, descr) {
+	return EVD.makeRPCRecHits(data, descr);
 }
 
-function makeCaloTowers(data, rd, descr, pindex) {
-	//["et", "double"],["eta", "double"],["phi", "double"],["iphi", "double"],["hadEnergy", "double"],["emEnergy", "double"],
-	//["pos", "v3d"],
-	//["front_1", "v3d"],["front_2", "v3d"],["front_3", "v3d"],["front_4", "v3d"],["back_1", "v3d"],["back_2", "v3d"],["back_3", "v3d"],["back_4", "v3d"]
-	var front = new Array();
-	var back = new Array();
-	front.push(makePoint(data[pindex + 0]));
-	front.push(makePoint(data[pindex + 1]));
-	front.push(makePoint(data[pindex + 2]));
-	front.push(makePoint(data[pindex + 3]));
-	back.push(makePoint(data[pindex + 4]));
-	back.push(makePoint(data[pindex + 5]));
-	back.push(makePoint(data[pindex + 6]));
-	back.push(makePoint(data[pindex + 7]));
-	
-	return makeTowers(data, rd, descr, front, back, data[4] + data[5]);
-}
-
-function makeCaloTowers_V1(data, rd, descr) {
-	return makeCaloTowers(data, rd, descr, 7);
-}
-
-function makeCaloTowers_V2(data, rd, descr) {
-	return makeCaloTowers(data, rd, descr, 11);
-}
-
-var MAX_JET_LENGTH = 4; 
-	
-function makeJet(data, rd, descr) {
-	var et = data[0];
-	var theta = data[2];
-	var phi = data[3];
-	var l = MAX_JET_LENGTH * getRankValue(data, rd);
-	log("l: " + l);
-	var cone = Pre3d.ShapeUtils.makeCone(l, l / 6, 24);
-	var t = new Pre3d.Transform();
-	log("theta: " + theta*360/2/3.141 + ", phi: " + phi*360/2/3.141);
-	t.rotateY(theta);
-	t.rotateZ(phi);
-	
-	var v = new Array();
-	for (var i = 0; i < cone.vertices.length; i++) {
-		v.push(t.transformPoint(cone.vertices[i]));
-	}
-	cone.vertices = v;
-	cone.fillColor = makeColor(descr.color, 0.4);
-	cone.strokeColor = null;
-	Pre3d.ShapeUtils.rebuildMeta(cone);
-	return cone;
-}
-
-function makeDTDigis(data) {
-	//["wireNumber", "int"],["layerId", "int"],["superLayerId", "int"],["sectorId", "int"],["stationId", "int"],["wheelId", "int"],
-	//["pos", "v3d"],["axis", "v3d"],["angle", "double"],
-	//["countsTDC", "int"],["number", "int"],
-	//["cellWidth", "double"],["cellLength", "double"],["cellHeight", "double"]]
-	var pos = makePoint(data[6]);
-	var axis = makePoint(data[7]);
-	var len = data[12];
-	var angle = data[8];
-	var t = new Pre3d.Transform();
-	t.rotateAroundAxis(axis, angle);
-	var p1 = t.transformPoint(makePoint2(0, - len / 2, 0));
-	var p2 = t.transformPoint(makePoint2(0, len / 2, 0));
-	
-	return {p1: addPoints(pos, p1), p2: addPoints(pos, p2)};
-}
-
-function makeDTRecHits(data) {
-	//["wireId", "int"],["layerId", "int"],["superLayerId", "int"],["sectorId", "int"],["stationId", "int"],["wheelId", "int"],
-	//["digitime", "double"],
-	//["wirePos", "v3d"],
-	//["lPlusGlobalPos", "v3d"],["lMinusGlobalPos", "v3d"],["rPlusGlobalPos", "v3d"],["rMinusGlobalPos", "v3d"],
-	//["lGlobalPos", "v3d"],["rGlobalPos", "v3d"],
-	//["axis", "v3d"],["angle", "double"],["cellWidth", "double"],["cellLength", "double"],["cellHeight", "double"]]
-	var pos = makePoint(data[7]);
-	var axis = makePoint(data[14]);
-	var angle = data[15];
-	var len = data[17];
-	
-	var t = new Pre3d.Transform();
-	t.rotateAroundAxis(axis, angle);
-	var p1 = t.transformPoint(makePoint2(0, - len / 2, 0));
-	var p2 = t.transformPoint(makePoint2(0, len / 2, 0));
-	
-	return {p1: addPoints(pos, p1), p2: addPoints(pos, p2)};
-}
-
-function makeDTRecSegments(data) {
-	return {p1: makePoint(data[1]), p2: makePoint(data[2])};
-}
-
-function makeRPCRecHits(data) {
-	return [{p1: makePoint(data[0]), p2: makePoint(data[1])}, 
-	        {p1: makePoint(data[2]), p2: makePoint(data[3])}, 
-	        {p1: makePoint(data[4]), p2: makePoint(data[5])}];
-}
-
-function makeCSCRecHit2Ds_V2 (data) {
-	return makeRPCRecHits(data);
-}
-
-function firstPoint(assoc, data2) {
-	for (var i = 0; i < assoc.length; i++) {
-		var asi = assoc[i];
-		if (asi[0][1] == 0) {
-			return makePoint(data2[asi[1][1]][0]);
-		}
-	}
-} 
-
-function makeGlobalMuons(data, rd, data2, assoc, data3) {
-  if (!assoc) {
+EVD.makeTrackPoints = function(data, descr, data2, assoc) {
+  if ( ! assoc ) {
     throw "No association for " + descr.key;
   }
-  var a = new Array();
-  for (var i = 0; i < data.length; i++) {
-    var last = null;
-    for (var j = 0; j < assoc.length; j++) {
-      if (assoc[j][0][1] == i) {
-	var p = makePoint(data2[assoc[j][1][1]][0]);
-	if (last !== null) {
-	  a.push({p1: last, p2: p});
-	}
-	last = p;
-      }
-    }
+	
+  var wfcolor = new THREE.Color();
+  wfcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  /*
+  var material = new THREE.LineBasicMaterial({color:wfcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+	*/
+  var muons = [];
+  for ( var i = 0; i < data.length; i++ ) {
+    muons[i] = new THREE.Geometry();
   }
-  return a;
-} 
 
-function makeTrackPoints(data, rd, descr, data2, assoc) {
-	//"PFBrems_V1": [["deltaP", "double"],["sigmadeltaP", "double"]] (spec - tracks)
-	//"PFBremTrajectoryPoints_V1": [[[43, 0], [42, 25]], (assoc)
-	//[[43, 0], [42, 26]], 
-	//[[43, 0], [42, 27]], 
-	//[[43, 0], [42, 28]],
-	//[collectionId, objectId]
-	//"PFTrajectoryPoints_V1": [["pos", "v3d"],["dir", "v3d"]] (other - points)
-	
-	// man, that took me a while
-	// so the association is of form [[[_, i], [_, p]]...]
-	// where i represents an index into the data array and p represents an index
-	// into the track points array
-	// to build a track, one needs to add all the points with indices p for which 
-	// i is equal to the current index into data
-	
-	if (!assoc) {
-		throw "No association for " + descr.key;
-	}
+  var mi = 0;
+  for ( var j = 0; j < assoc.length; j++ ) {
+    mi = assoc[j][0][1];
+    pi = assoc[j][1][1];
+    muons[mi].vertices.push(new THREE.Vector3(data2[pi][0][0],data2[pi][0][1],data2[pi][0][2]));
+  }
+  
+  var lines = [];
+  for ( var k = 0; k < muons.length; k++ ) {
+    var material = new THREE.LineBasicMaterial({color:wfcolor, 
+                                              linewidth:descr.lineWidth, 
+                                              opacity:descr.color[3]});
+    lines.push(new THREE.Line(muons[k], material));
+  }
 
-	var a = new Array();
-	for (var i = 0; i < data.length; i++) {
-		var last = null;
-		for (var j = 0; j < assoc.length; j++) {
-			if (assoc[j][0][1] == i) {
-				var p = makePoint(data2[assoc[j][1][1]][0]);
-				if (last !== null) {
-					a.push({p1: last, p2: p});
-				}
-				last = p;
-			}
-		}
-	}
-	return a;
+  lines.forEach(function(l) {
+    l.name = descr.key;
+    l.visible = descr.on;
+  });
+
+  return lines;
 }
 
-function makePhotons(data) {
-	// tpm: draw a line representing the inferred photon trajectory from the vertex (IP?) to the 
-	// extent of the ECAL
-	//"Photons_V1": [["energy", "double"],["et", "double"],["eta", "double"],["phi", "double"],["pos", "v3d"]
+EVD.makeTrackCurves = function(tracks, descr, extras, assocs) {
+  if ( ! assocs ) {
+    throw "No association for " + descr.key;
+  }
 
-	var lEB = 3.0;  // half-length of the EB (m)
-  	var rEB = 1.24; // inner radius of the EB (m)
+  var wfcolor = new THREE.Color();
+  wfcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
+
+  var ti, ei;
+  var p1, d1, p2, d2;
+  var distance, scale, curve;
+  var geometry;
+
+  var curves = [];
+
+  for ( var i = 0; i < assocs.length; i++ ) {
+    ti = assocs[i][0][1];
+    ei = assocs[i][1][1];
+
+    p1 = new THREE.Vector3(extras[ei][0][0],extras[ei][0][1],extras[ei][0][2]);
+    d1 = new THREE.Vector3(extras[ei][1][0],extras[ei][1][1],extras[ei][1][2]);
+    d1.normalize();
+
+    p2 = new THREE.Vector3(extras[ei][2][0],extras[ei][2][1],extras[ei][2][2]);
+    d2 = new THREE.Vector3(extras[ei][3][0],extras[ei][3][1],extras[ei][3][2]);
+    d2.normalize();
+
+    // What's all this then?
+    // Well, we know the beginning and end points of the track as well
+    // as the directions at each of those points. This in-principle gives 
+    // us the 4 control points needed for a cubic bezier spline. 
+    // The control points from the directions are determined by moving along 0.25
+    // of the distance between the beginning and end points of the track. 
+    // This 0.25 is nothing more than a fudge factor that reproduces closely-enough
+    // the NURBS-based drawing of tracks done in iSpy. At some point it may be nice
+    // to implement the NURBS-based drawing but I value my sanity.
+
+    distance = p1.distanceTo(p2);
+    scale = distance*0.25;
+
+    p3 = new THREE.Vector3(p1.x+scale*d1.x, p1.y+scale*d1.y, p1.z+scale*d1.z);
+    p4 = new THREE.Vector3(p2.x-scale*d2.x, p2.y-scale*d2.y, p2.z-scale*d2.z);
+
+    curve = new THREE.CubicBezierCurve3(p1,p3,p4,p2);
+    geometry = new THREE.Geometry();
+    geometry.vertices = curve.getPoints(16);
+
+    var material = new THREE.LineBasicMaterial({color:wfcolor, 
+                                              linewidth:descr.lineWidth,
+                                              linecap:'butt', 
+                                              opacity:descr.color[3]});
+
+    curves.push(new THREE.Line(geometry,material));
+  }
+
+  curves.forEach(function(c) {
+    c.name = descr.key;
+    c.visible = descr.on;
+  });
+
+  return curves;
+}
+
+EVD.makePhotons = function(data, descr) {
+	/*
+     Draw a line representing the inferred photon trajectory from the vertex (IP?) to the extent of the ECAL
+	   "Photons_V1": [["energy", "double"],["et", "double"],["eta", "double"],["phi", "double"],["pos", "v3d"]
+  */
+	
+  var lEB = 3.0;  // half-length of the EB (m)
+  var rEB = 1.24; // inner radius of the EB (m)
 
 	var eta = data[2];
 	var phi = data[3];
 
-    var px = Math.cos(phi);
-    var py = Math.sin(phi);
+  var px = Math.cos(phi);
+  var py = Math.sin(phi);
+  var pz = (Math.pow(Math.E, eta) - Math.pow(Math.E, -eta))/2;
 
-    // var pz = Math.sinh(eta);
-    var pz = (Math.pow(Math.E, eta) - Math.pow(Math.E, -eta))/2;
+  var t = 0.0;
 
-    var pt1 = makePoint(data[4]);
+  var x0 = data[4][0];
+  var y0 = data[4][1];
+  var z0 = data[4][2];
 
-    var t = 0.0;
-
-    var x0 = pt1.x;
-    var y0 = pt1.y;
-    var z0 = pt1.z;
-
-    if ( Math.abs(eta) > 1.48 ) { // i.e. not in the EB, so propagate to ES
-      t = Math.abs((lEB - z0)/pz);
-    } else { // propagate to EB 
-      var a = px*px + py*py;
-      var b = 2*x0*px + 2*y0*py;
-      var c = x0*x0 + y0*y0 - rEB*rEB;
-      t = (-b+Math.sqrt(b*b-4*a*c))/2*a;
-    }
-
-	return {p1: pt1, p2: makePoint([x0+px*t, y0+py*t, z0+pz*t])};
-}
-
-/*
- * 
- * 
-"GsfTrackExtras_V1": [[[37, 0], [38, 0]], 
-[[37, 1], [38, 1]]
-]
-
-"TrackExtras_V1": [[[2, 0], [3, 0]], 
-[[2, 1], [3, 1]]
-]
-
-"Extras_V1": [[[0.0401944, -0.0103354, -0.0174814], [923.289, -238.174, 738.918], [1.05821, -0.273628, 0.797378], [917.889, -238.014, 734.835]], 
-[[-0.0401818, 0.0104068, -0.0818134], [-955.721, 246.517, -765.15], [-1.03381, 0.266071, -0.877191], [-963.512, 247.307, -771.153]]
-]
-
-"GsfExtras_V1": [[[0.0401958, -0.0103279, -0.0174892], [1864.99, -481.33, 1492.84], [1.05821, -0.273637, 0.797469], [649.777, -168.58, 520.271]], 
-[[-0.0401819, 0.0104067, -0.0818068], [-1209.66, 311.983, -968.486], [-1.03381, 0.266067, -0.877252], [-680.918, 174.709, -545.014]]
-]
- */
-
-/**
- * This ignores control points. I'm not sure what iSpy does, but
- * my curves are visibly curved in some cases when they appear as straight lines
- * in iSpy
- */
-function makeTrackPoints2(data, rd, descr, data2, assoc) {
-	if (!assoc) {
-		throw "No association for " + descr.key;
-	}
-	
-	var lines = new Array();
-	
-	for (var i = 0; i < data.length; i++) {
-		var last = null;
-		for (var j = 0; j < assoc.length; j++) {
-			if (assoc[j][0][1] == i) {
-				var mapped = data2[assoc[j][1][1]];
-				var pos1 = makePoint(mapped[0]);
-				var pos2 = makePoint(mapped[2]);
-				log(descr.key + ": " + pointToStr(pos1) + ", " + pointToStr(pos2));
-				if (last !== null) {
-					lines.push({p1: last, p2: pos1});
-				}
-				lines.push({p1: pos1, p2: pos2});
-				last = pos2;
-			}
-		}
-	}
-	return lines;
-}
-
-function makeTrackCurves(data, rd, descr, data2, assoc) {
-  if (!assoc) {
-    throw "No association for " + descr.key;
-  }
-	
-  var paths = new Array();
-	
-  for (var i = 0; i < data.length; i++) {
-    //var last = null;
-    var cnt = 0;
-    var path = new Pre3d.Path();
-    var points = new Array();
-    var curves = new Array();
-    
-    for (var j = 0; j < assoc.length; j++) {
-      if (assoc[j][0][1] == i) {
-	var mapped = data2[assoc[j][1][1]];
-	var pos1 = makePoint(mapped[0]);
-	var dir1 = Pre3d.Math.normalize(makePoint(mapped[1]));
-	var pos2 = makePoint(mapped[2]);
-	var dir2 = Pre3d.Math.normalize(makePoint(mapped[3]));
-	log("pos1 = " + pointToStr(Pre3d.Math.normalize(subPoints(pos2, pos1))) + ", dir1 = " + pointToStr(dir1) + "pos2 = " + pointToStr(pos2) + ", dir2 = " + pointToStr(dir2));
-	points.push(pos1);
-	points.push(dir1);
-	points.push(pos2);
-	points.push(dir2);
-	curves.push(new Pre3d.Curve(cnt * 4 + 2, cnt * 4 + 1, cnt * 4 + 3)); 
-	cnt++;
-      }
-    }
-    path.points = points;
-    path.curves = curves;
-    path.starting_point = 0;
-    paths.push(path);
-  }
-  return paths;
-}
-
-/**
- * ... of unit radius and with a unit advance in the +z direction
- */
-function makeHelixArc(angle) {
-	var v = [];
-	var c = [];
-	var count = Math.round(angle * 4 / Math.PI) + 1;
-	var rp = 1 / (Math.cos(angle / count / 2));
-	var sp = {x: 1, y: 0, z: 0};
-	v.push(sp);
-	for (var i = 1; i <= count; i++) {
-		var ca = i * angle / count;
-		var cap = (i - 0.5) * angle / count;
-		var cp = {x: rp * Math.cos(cap), y: rp * Math.sin(cap), z: (i - 0.5) / count};
-		v.push(cp);
-		var ep = {x: Math.cos(ca), y: Math.sin(ca), z: i / count};
-		v.push(ep);
-		var pi = v.length - 2;
-		c.push(new Pre3d.Curve(pi + 1, pi, null));
-	}
-	
-	var path = new Pre3d.Path();
-	path.points = v;
-	path.starting_point = 0;
-	path.curves = c;
-	path.drawEndPoints = true;
-	return path;
-}
-
-function makeLinePath(p1, p2) {
-	cp1 = Pre3d.Math.linearInterpolatePoints3d(p1, p2, 0.5);
-	var path = new Pre3d.Path();
-	path.points = [p1, p2, cp1];
-	path.starting_point = 0;
-	path.curves = [new Pre3d.Curve(1, 2, null)];
-	return path;
-}
-
-function makeTrackCurves2(data, rd, descr, data2, assoc) {
-  if (!assoc) {
-    throw "No association for " + descr.key;
-  }
-	
-  //if ( data.length != assoc.length ) {
-  	//throw "data.length != assoc.length for " + descr.key;
-  //}
-
-  var l = new Array();
-  var dot = Pre3d.Math.dotProduct3d;
-  var cross = Pre3d.Math.crossProduct;
-  var addPoints = Pre3d.Math.addPoints3d;
-  var subPoints = Pre3d.Math.subPoints3d;
-  var mulPoint = Pre3d.Math.mulPoint3d;
-  var mag = Pre3d.Math.vecMag3d;
-  var normalize = Pre3d.Math.normalize;
-  var interpolate = Pre3d.Math.linearInterpolatePoints3d;
-	
-  for (var i = 0; i < data.length; i++) {
-    for (var j = 0; j < assoc.length; j++) {
-      if (assoc[j][0][1] == i) {
-	var mapped = data2[assoc[j][1][1]];
-	var p1 = makePoint(mapped[0]);
-	var p2 = makePoint(mapped[2]);
-	var t1 = normalize(makePoint(mapped[1]));
-	var t2 = normalize(makePoint(mapped[3]));
-				
-	var rt1 = addPoints(p1, t1);
-	var rt2 = addPoints(p2, t2);
-				
-	//so we're dealing with a helix with endpoints in pos1 and pos2 and
-	//tangents in t1 and t2				
-	var p1p2 = subPoints(p2, p1);
-								
-	var dot1 = dot(p1p2, t1);
-	if (dot1 < 0.000001) { //ie t1 is parallel with p1p2: straight line
-	  //though this assumes symmetry of the helix
-	  var path = makeLinePath(p1, p2);
-	  path.drawEndPoints = true;
-	  l.push(path);
-	}
-	else {
-	  //n is perpendicular to both lines
-	  //and is the normal of the plane of the spiral (though this is a bit of an approximation
-	  //since the tangent to the helix has, at any point, a z component)
-	  //so I think this should be fixed to account for that
-	  var n = cross(t1, t2);
-	  //the height of the helix would then be the sum of
-	  //the projections of the points on this normal
-	  var height = dot(p1p2, n) / mag(n);
-	  //now the arc of the spiral is the magnitude of the projection
-	  //of p1p2 on the plane. But we know the distance between them and 
-	  //the height, so...
-	  var magp1p2 = mag(p1p2);
-	  var arclen = Math.sqrt(magp1p2 * magp1p2 - height * height);
-					
-	  //since t1 and t2 are normalized
-	  //t1 . t2 = |t1||t2|cos t <=> t1 . t2 = cos t
-	  //though this should probably be projected in the helix plane (which under the
-	  //previous assumption is currently the same as the t1t2 plane).
-	  var cost = dot(t1, t2);
-	  var sint = mag(cross(t1, t2));
-					
-	  //the angle between tangents is the arc angle
-	  var a = Math.atan2(sint, cost);
-	  
-	  // arclen/2 is also the radius * sin (a / 2)
-	  var radius = arclen / Math.sin(a / 2) / 2;
-
-	  //make a unit spiral arc (rotating in the xy plane and translating in the z axis)
-	  var helix = makeHelixArc(a);
-					
-	  var t = new Pre3d.Transform();
-	  t.scale(radius, radius, height);
-
-	  //now that it's scaled we need to rotate it such
-	  //that p1p2 is the same as the endpoints of the helix
-	  var ep1 = t.transformPoint(helix.points[0]);
-	  var ep2 = t.transformPoint(helix.points[helix.points.length - 1]);
-	  var ep1ep2 = subPoints(ep2, ep1);
-	  var axis = cross(ep1ep2, p1p2);
-	  if (mag(axis) > 0.00001) {
-	    var magp1p2 = mag(p1p2);
-	    var magep1ep2 = mag(ep1ep2);
-	    var sinphi = mag(axis) / magp1p2 / magep1ep2;
-	    var cosphi = dot(ep1ep2, p1p2) / magp1p2 / magep1ep2;
-	    var phi = Math.atan2(sinphi, cosphi);
-	    t.rotateAroundAxis(axis, phi);
-	  } //otherwise no rotation needed
-					
-	  //also rotate around the p1p2 axis such that
-	  //t1 points in the same direction as helix.t1
-	  var helixt1 = normalize(t.transformPoint(helix.points[1]));
-	  var np1p2 = normalize(p1p2);
-					
-	  // c1 and c2 are the normals to the planes determined by p1p2 and
-	  // (helix.t1, t1) respectively
-	  // since we want these planes to coincide, the rotation angle
-	  // is the angle between c1 and c2
-	  var c1 = normalize(cross(helixt1, np1p2));
-	  var c2 = normalize(cross(t1, np1p2));
-	  var pc1 = addPoints(p1, c1);
-	  var pc2 = addPoints(p1, c2);
-					
-	  var axis2 = cross(c1, c2);
-	  //basically this tests if the two lines are sufficiently parallel (a term which probably only
-	  //exists in computer engineering) in which case no rotation is needed
-	  if (mag(axis2) > 0.00001) {
-	    var sinrho = mag(axis2);
-	    var cosrho = dot(c1, c2);
-	    var rho = Math.atan2(sinrho, cosrho);
-	    
-	    //rotate around axis2 instead of p1p2 because
-	    //axis2 takes into acount direction of rotation between c1 and c2
-	    t.rotateAroundAxis(axis2, rho);
-	  }
-						
-	  //now that p1p2 and the helix endpoints are parallel
-	  //just translate by their difference
-					
-	  var p1rep1 = subPoints(t.transformPoint(helix.points[0]), p1);
-	  t.translate(-p1rep1.x, -p1rep1.y, -p1rep1.z);
-	  
-	  for (var k = 0; k < helix.points.length; k++) {
-	    helix.points[k] = t.transformPoint(helix.points[k]);
-	  }
-	  // I might have done simpler things in my life
-	  l.push(helix);
-	}				
-      }
-    }
+  if ( Math.abs(eta) > 1.48 ) { // i.e. not in the EB, so propagate to ES
+    t = Math.abs((lEB - z0)/pz);
+  } else { // propagate to EB 
+    var a = px*px + py*py;
+    var b = 2*x0*px + 2*y0*py;
+    var c = x0*x0 + y0*y0 - rEB*rEB;
+    t = (-b+Math.sqrt(b*b-4*a*c))/2*a;
   }
 
-	return l;
-}
+  var pt1 = new THREE.Vector3(x0, y0, z0);
+  var pt2 = new THREE.Vector3(x0+px*t, y0+py*t, z0+pz*t);
 
-function getRankingData(d_event, desc, data) {
-	if (!desc.rank) {
-		return null;
-	}
-	var tdata = d_event["Types"][desc.key];
-	var index = null;
-	for (var i = 0; i < tdata.length; i++) {
-		if (desc.rank == tdata[i][0]) {
-			index = i;
-			break;
-		}
-	}
-	if (index === null) {
-		throw "Invalid rank for " + desc.key + ": " + desc.rank;
-	}
-	var rfn = desc.rankingFunction;
-	if (!rfn) {
-		rfn = function(data) {
-			return data[index];
-		};
-	}
-	var v = new Array();
-	var indices = new Array();
-	for (var i = 0; i < data.length; i++) {
-		var vv = rfn(data[i]);
-		if (vv == null) {
-			log("Invalid " + desc.rank + " for " + desc.key + "[" + i + "]");
-		}
-		v.push(vv);
-		indices.push([vv, i]);
-	}
-	v.sort(function(a, b) { return a - b });
-	indices.sort(function(a, b) { return a[0] - b[0];});
-	var dataOrder = new Array();
-	for (var i = 0; i < indices.length; i++) {
-		dataOrder.push(indices[i][1]);
-	}
-	var range = v[v.length - 1];
-	log(v);
-	var thresholdIndex = Math.round(v.length * GLOBAL_RANK_THRESHOLD);
-	var rd = {
-		index: index,
-		sorted: v,
-		dataOrder: dataOrder,
-		range: range,
-		dirty: true,
-		lowCut: document.settings.globalCaloEnergyLowCut,
-		highCut: 1.0,
-		rfn: rfn,
-	};
-	log("ranking for " + desc.key + ": index = " + index + ", range = " + range + ", v = " + v.length);
-	return rd;
-}
+  var lcolor = new THREE.Color();
+  lcolor.setRGB(descr.color[0], descr.color[1], descr.color[2]); 
 
-function rebuildRankingIndices(rd) {
-	rd.lowIndex = findLIndex(rd.sorted, rd.lowCut * rd.range);
-	rd.highIndex = findHIndex(rd.sorted, rd.highCut * rd.range);
-	rd.dirty = false;
-}
+  var material = new THREE.LineDashedMaterial({color:lcolor, 
+                                              linewidth:descr.lineWidth,
+                                              opacity:descr.color[3]});
 
-function findLIndex(vec, value) {
-	for (var i = 0; i < vec.length; i++) {
-		if (vec[i] >= value) {
-			return i;
-		}
-	}
-	return vec.length;
-}
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(pt1);
+  geometry.vertices.push(pt2);
 
-function findHIndex(vec, value) {
-	for (var i = 0; i < vec.length; i++) {
-		if (vec[i] > value) {
-			return i - 1;
-		}
-	}
-	return vec.length - 1;
-}
+  var line = new THREE.Line(geometry, material);
+  line.name = descr.key;
+  line.visible = descr.on;
 
-function getRankValue(data, rd) {
-	if (rd) {
-    	return rd.rfn(data) / rd.range;
-    }
-	else {
-		return null;
-	}
+  return [line];
 }

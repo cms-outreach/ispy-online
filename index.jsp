@@ -10,26 +10,40 @@
 		<link href="./css/event-browser.css" rel="stylesheet" type="text/css" />
 		<link href="./css/speed-test.css" rel="stylesheet" type="text/css" />
 		
-		<script src="./js/elab.js"></script>
-		<script src="./js/utils.js"></script>
-		<script src="./js/flexcroll.js"></script>
-		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
-        <script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
-		<script src="./js/pre3d.js"></script>
-		<script src="./js/pre3d_shape_utils.js"></script>
-		<script src="./js/base64.js"></script>
-		<script src="./js/canvas2image.js"></script>
-		<script src="./js/demo_utils.js"></script>
-		<script src="./js/object-conversion.js"></script>
+		<script src="./js/jquery-1.9.0.js"></script>
+        <script src="./js/jquery-migrate-1.0.0.js"></script>
+
+		<script type="text/javascript" src="js/three.js"></script>
+		<script type="text/javascript" src="js/TrackballControls.js"></script>
+
+		<script src="./js/setup.js"></script>
 		<script src="./js/detector-model-gen.js"></script>
 		<script src="./js/detector-model-geometry.js"></script>
 		<script src="./js/data-description.js"></script>
+		<script src="./js/eventdisplay.js"></script>
+
+		<script src="./js/about.js"></script>
+		<script src="./js/event-browser.js"></script>
+		<script src="./js/range-selection.js"></script>
+		<script src="./js/settings.js"></script>
+		<script src="./js/speed-test.js"></script>
+
+		<script src="./js/elab.js"></script>
+		<script src="./js/utils.js"></script>
+		<script src="./js/flexcroll.js"></script>
+		
+		<!--
+		<script src="./js/pre3d.js"></script>
+		<script src="./js/pre3d_shape_utils.js"></script>
+		<script src="./js/demo_utils.js"></script>
+		-->
+		<script src="./js/base64.js"></script>
+		<script src="./js/canvas2image.js"></script>
+		<script src="./js/object-conversion.js"></script>
+		
 		<script src="./js/save.js"></script>
 	</head>
 	<body class="black">
-	<script>
-		initlog(false);
-	</script>
 <table>
 	<tr>
 		<td colspan="2" class="titlebar-plain bordered">
@@ -49,9 +63,10 @@
 			</div>
 		</td>
 		<td class="bordered">
-			<canvas id="canvas" width="800" height="600">
+			<div id="container">
+			<!--<canvas id="canvas" width="800" height="600">
   				Sorry, this requires a web browser which supports HTML5 canvas.
-			</canvas>
+			</canvas>-->
 		</td>
 	</tr>
 	<tr>
@@ -62,13 +77,6 @@
 		</td>
 	</tr>
 </table>
-<script src="./js/eventdisplay.js"></script>
-
-<script src="./js/about.js"></script>
-<script src="./js/event-browser.js"></script>
-<script src="./js/range-selection.js"></script>
-<script src="./js/settings.js"></script>
-<script src="./js/speed-test.js"></script>
 
 <%@ include file="./jsp/settings.jspf" %>
 <%@ include file="./jsp/range-selection.jspf" %>
@@ -77,5 +85,12 @@
 <%@ include file="./jsp/about.jspf" %>
 <%@ include file="./jsp/detector-help.jspf" %>
 
-	</body>
+<script type="text/javascript">
+	$(function() {
+    	EVD.init();
+    	EVD.animate();
+    });
+</script>
+
+</body>
 </html>
