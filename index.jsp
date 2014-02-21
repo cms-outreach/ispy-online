@@ -64,10 +64,8 @@
 			</div>
 		</td>
 		<td class="bordered">
-			<div id="container">
-			<!--<canvas id="canvas" width="800" height="600">
-  				Sorry, this requires a web browser which supports HTML5 canvas.
-			</canvas>-->
+			<!-- This is where the canvas goes -->
+			<div id="container"></div>
 		</td>
 	</tr>
 	<tr>
