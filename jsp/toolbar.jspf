@@ -72,7 +72,6 @@
 		<td class="toolbar-separator">
 			&nbsp;
 		</td>
-		<!-- Deprecate until sorted
 		<td>
 			<a class="toolbar-button" onclick="showSettings();">
 				<img src="../graphics/settings.png" title="Settings"/>
@@ -82,7 +81,6 @@
 		<td class="toolbar-separator">
 			&nbsp;
 		</td>
-		-->
 		<td>
 			<a class="toolbar-button" id="help" onclick="openAboutWindow();">
 				<img src="../graphics/help2.png" title="About"/>

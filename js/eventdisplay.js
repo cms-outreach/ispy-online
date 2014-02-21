@@ -363,6 +363,17 @@ EVD.init = function() {
 	EVD.loadDetector();
 }
 
+EVD.toggleBackground = function() {
+	if (EVD.settings.invertColors) {
+		document.body.className = "black";
+		EVD.settings.invertColors = false;
+	}
+	else {
+		document.body.className = "white";
+		EVD.settings.invertColors = true;
+	}
+}
+
 EVD.lookAtOrigin = function() {
 	EVD.camera.lookAt(new THREE.Vector3(0,0,0));
 }

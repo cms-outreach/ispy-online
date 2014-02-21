@@ -5,7 +5,7 @@
 				<div class="title">Settings</div>
 			</td>
 			<td class="buttons">
-				<a class="titlebar-button" onclick="saveAndHideSettings();"><img src="../graphics/close.png" /></a>
+				<a class="titlebar-button" onclick="hideSettings();"><img src="../graphics/close.png" /></a>
 			</td>
 		</tr>
 	</table>
@@ -16,17 +16,7 @@
 				<table class="settings-section">
 					<tr>
 						<td>
-							<input type="checkbox" id="setting-invert-colors" onclick="toggleBackground();" />Invert colors
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<input type="checkbox" id="setting-show-fps" onclick="toggleFPS();" />Show FPS
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<a class="button" id="speed-test" onclick="showSpeedTest();">Browser speed test</a>
+							<input type="checkbox" id="setting-invert-colors" onclick="EVD.toggleBackground();" />Invert colors
 						</td>
 					</tr>
 				</table>
@@ -38,7 +28,7 @@
 					<tr>
 						<td></td>
 						<td>
-							<a class="button" id="settings-close" onclick="saveAndHideSettings();">Close</a>
+							<a class="button" id="settings-close" onclick="hideSettings();">Close</a>
 						</td>
 					</tr>
 				</table>

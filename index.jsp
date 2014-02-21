@@ -24,9 +24,9 @@
 		<script src="./js/eventdisplay.js"></script>
 
 		<script src="./js/about.js"></script>
+		<script src="./js/settings.js"></script>
 		<script src="./js/event-browser.js"></script>
 		<script src="./js/range-selection.js"></script>
-		<script src="./js/settings.js"></script>
 		<script src="./js/speed-test.js"></script>
 
 		<script src="./js/elab.js"></script>

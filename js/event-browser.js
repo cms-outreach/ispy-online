@@ -1,30 +1,30 @@
 function enableNextPrev() {
-	if (document.selectedEventIndex > 0) {
+	if (EVD.selectedEventIndex > 0) {
 		$("#prev-event-button").removeClass("disabled");
 	}
-	if (document.currentEventList && (document.currentEventList.length > document.selectedEventIndex)) {
+	if (EVD.currentEventList && (EVD.currentEventList.length > EVD.selectedEventIndex)) {
 		$("#next-event-button").removeClass("disabled");
 	}
 }
 
 function loadCurrentEvent() {
-	var file = document.currentFileList[document.selectedFileIndex];
-	var event = document.currentEventList[document.selectedEventIndex];
+	var file = EVD.currentFileList[EVD.selectedFileIndex];
+	var event = EVD.currentEventList[EVD.selectedEventIndex];
 	var size = event.size;
-	var path = document.settings.lastDir + "/" + file.name;
+	var path = EVD.settings.lastDir + "/" + file.name;
 	var ro = startDownload(path + ":" + event.name, "Loading " + path + ":" + event.name + "...", EVD.eventDataLoaded);
 }
 
 function nextEvent() {
-	if (document.currentEventList && (document.currentEventList.length > document.selectedEventIndex)) {
-		document.selectedEventIndex++;
+	if (EVD.currentEventList && (EVD.currentEventList.length > EVD.selectedEventIndex)) {
+		EVD.selectedEventIndex++;
 		loadCurrentEvent();
 	}
 }
 
 function prevEvent() {
-	if (document.selectedEventIndex > 0) {
-		document.selectedEventIndex--;
+	if (EVD.selectedEventIndex > 0) {
+		EVD.selectedEventIndex--;
 		loadCurrentEvent();
 	}
 }
@@ -35,7 +35,7 @@ function showEventBrowser() {
 	clearList("browser-events");
 	$("#event-browser").show();
 	$("#browser-load").addClass("disabled");
-	browserFileList(document.settings.lastDir);
+	browserFileList(EVD.settings.lastDir);
 }
 
 function closeEventBrowser() {
@@ -74,8 +74,8 @@ function browserFileListCB(text, dir) {
 function updateFileList(list, dir) {
 	clearList("browser-files");
 	clearList("browser-events");
-	document.currentFileList = list;
-	document.settings.lastDir = dir;
+	EVD.currentFileList = list;
+	EVD.settings.lastDir = dir;
 	var tbl = document.getElementById("browser-files");
 	for (var i = 0; i < list.length; i++) {
 		var e = list[i];
@@ -94,30 +94,30 @@ function stripOne(f) {
 }
 
 function selectFile(index) {
-	if (document.selectedFileIndex) {
-		$("#browser-file-" + document.selectedFileIndex).removeClass("selected");
+	if (EVD.selectedFileIndex) {
+		$("#browser-file-" + EVD.selectedFileIndex).removeClass("selected");
 	}
-	if (document.selectedEventIndex) {
-		$("#browser-event-" + document.selectedEventIndex).removeClass("selected");
+	if (EVD.selectedEventIndex) {
+		$("#browser-event-" + EVD.selectedEventIndex).removeClass("selected");
 	}
-	var f = document.currentFileList[index];
+	var f = EVD.currentFileList[index];
 	if (f.type == 1) {
 		$("#selected-event").html("");
 		$("#browser-load").addClass("disabled");
-		document.selectedFileIndex = null;
+		EVD.selectedFileIndex = null;
 		var dir;
 		if (f.name == "..") {
-			dir = stripOne(document.settings.lastDir);
+			dir = stripOne(EVD.settings.lastDir);
 		}
 		else {
-			dir = document.settings.lastDir + "/" + f.name;
+			dir = EVD.settings.lastDir + "/" + f.name;
 		}
-		document.settings.lastDir = dir;
+		EVD.settings.lastDir = dir;
 		browserFileList(dir);
 	}
 	else {
-		document.selectedFileIndex = index;
-		browserEventList(document.settings.lastDir + "/" + f.name, index);
+		EVD.selectedFileIndex = index;
+		browserEventList(EVD.settings.lastDir + "/" + f.name, index);
 	}
 }
 
@@ -126,7 +126,7 @@ function browserEventList(file, fileIndex) {
 }
 
 function browserEventListCB(text, fileIndex) {
-	document.selectedFileIndex = fileIndex;
+	EVD.selectedFileIndex = fileIndex;
 	$("#browser-file-" + fileIndex).addClass("selected");
 	try {
 		resp = eval(text);
@@ -138,7 +138,7 @@ function browserEventListCB(text, fileIndex) {
 }
 
 function updateEventsList(list) {
-	document.currentEventList = list;
+	EVD.currentEventList = list;
 	clearList("browser-events");
 	var tbl = document.getElementById("browser-events");
 	for (var i = 0; i < list.length; i++) {
@@ -151,14 +151,14 @@ function updateEventsList(list) {
 }
 
 function selectEvent(index) {
-	var file = document.currentFileList[document.selectedFileIndex];
-	if (document.selectedEventIndex) {
-		$("#browser-event-" + document.selectedEventIndex).removeClass("selected");
+	var file = EVD.currentFileList[EVD.selectedFileIndex];
+	if (EVD.selectedEventIndex) {
+		$("#browser-event-" + EVD.selectedEventIndex).removeClass("selected");
 	}
 	$("#browser-event-" + index).addClass("selected");
-	document.selectedEventIndex = index;
-	var event = document.currentEventList[index];
-	var ld = document.settings.lastDir;
+	EVD.selectedEventIndex = index;
+	var event = EVD.currentEventList[index];
+	var ld = EVD.settings.lastDir;
 	$("#selected-event").html(ld + "/" + file.name + ":" + event.name);
 	$("#browser-load").removeClass("disabled");
 }
@@ -177,16 +177,16 @@ function browserRequest(name, paramStr, callback, data) {
     			callback(ro.responseText, data);
     		}
     		else {
-	    		log("Update failed: ");
-	    		log("    status: " + ro.status);
-    	    	log("    statusText: " + ro.statusText);
-    	    	log("    responseText: " + ro.responseText);
+	    		console.log("Update failed: ");
+	    		console.log("    status: " + ro.status);
+    	    	console.log("    statusText: " + ro.statusText);
+    	    	console.log("    responseText: " + ro.responseText);
     	    	callback(ro.responseText, data, ro.statusText);
     		}
     	}
     }
     var url = "jsp/browser.jsp?op=" + name + "&param=" + paramStr;
-    log("url: <a href=\"" + url + "\">" + url + "</a>");
+    console.log("url: <a href=\"" + url + "\">" + url + "</a>");
     ro.open("get", url);
     ro.onreadystatechange = cb;
     ro.send(null);
@@ -199,10 +199,10 @@ function loadEvent() {
 	}
 	closeEventBrowser();
 	
-	var file = document.currentFileList[document.selectedFileIndex];
-	var event = document.currentEventList[document.selectedEventIndex];
+	var file = EVD.currentFileList[EVD.selectedFileIndex];
+	var event = EVD.currentEventList[EVD.selectedEventIndex];
 	var size = event.size;
-	var path = document.settings.lastDir + "/" + file.name;
+	var path = EVD.settings.lastDir + "/" + file.name;
 	var ro = startDownload(path + ":" + event.name, "Loading " + path + ":" + event.name + "...", EVD.eventDataLoaded);
 	var progress = function() {
 		if (ro.readyState == 1) {
