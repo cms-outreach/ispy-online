@@ -1,7 +1,7 @@
 <table id="toolbar">
 	<tr>
 		<td>
-			<a class="toolbar-button" onclick="EVD.showEventBrowser();">
+			<a class="toolbar-button" onclick="showEventBrowser();">
 				<img src="../graphics/open.png" title="Open"/>
 			</a>
 		</td>
@@ -9,12 +9,12 @@
 			&nbsp;
 		</td>
 		<td>
-			<a class="toolbar-button disabled" id="prev-event-button" onclick="EVD.prevEvent();">
+			<a class="toolbar-button disabled" id="prev-event-button" onclick="prevEvent();">
 				<img src="../graphics/prev-event.png" title="Previous Event"/>
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button disabled" id="next-event-button" onclick="EVD.nextEvent();">
+			<a class="toolbar-button disabled" id="next-event-button" onclick="nextEvent();">
 				<img src="../graphics/next-event.png" title="Next Event"/>
 			</a>
 		</td>
@@ -52,7 +52,7 @@
 			</a>
 		</td>
 		<td>
-			<a class="toolbar-button" onclick="setYZ();">
+			<a class="toolbar-button" onclick="EVD.setYZ();">
 				<img src="../graphics/x-plane.png" title="Y-Z Plane"/>
 			</a>
 		</td>

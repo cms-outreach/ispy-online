@@ -1,3 +1,34 @@
+function enableNextPrev() {
+	if (document.selectedEventIndex > 0) {
+		$("#prev-event-button").removeClass("disabled");
+	}
+	if (document.currentEventList && (document.currentEventList.length > document.selectedEventIndex)) {
+		$("#next-event-button").removeClass("disabled");
+	}
+}
+
+function loadCurrentEvent() {
+	var file = document.currentFileList[document.selectedFileIndex];
+	var event = document.currentEventList[document.selectedEventIndex];
+	var size = event.size;
+	var path = document.settings.lastDir + "/" + file.name;
+	var ro = startDownload(path + ":" + event.name, "Loading " + path + ":" + event.name + "...", EVD.eventDataLoaded);
+}
+
+function nextEvent() {
+	if (document.currentEventList && (document.currentEventList.length > document.selectedEventIndex)) {
+		document.selectedEventIndex++;
+		loadCurrentEvent();
+	}
+}
+
+function prevEvent() {
+	if (document.selectedEventIndex > 0) {
+		document.selectedEventIndex--;
+		loadCurrentEvent();
+	}
+}
+
 function showEventBrowser() {
 	centerElement("event-browser");
 	clearList("browser-files");
@@ -172,7 +203,7 @@ function loadEvent() {
 	var event = document.currentEventList[document.selectedEventIndex];
 	var size = event.size;
 	var path = document.settings.lastDir + "/" + file.name;
-	var ro = startDownload(path + ":" + event.name, "Loading " + path + ":" + event.name + "...", eventDataLoaded);
+	var ro = startDownload(path + ":" + event.name, "Loading " + path + ":" + event.name + "...", EVD.eventDataLoaded);
 	var progress = function() {
 		if (ro.readyState == 1) {
 			updateProgress(0.5, "Connection opened");

@@ -19,6 +19,7 @@
 		<script src="./js/setup.js"></script>
 		<script src="./js/detector-model-gen.js"></script>
 		<script src="./js/detector-model-geometry.js"></script>
+		<script src="./js/object-conversion.js"></script>
 		<script src="./js/data-description.js"></script>
 		<script src="./js/eventdisplay.js"></script>
 

@@ -11,6 +11,84 @@ EVD.getField = function(data, name) {
 	return data[data.indices[name]];
 }
 
+EVD.toggle = function(group, key) {
+	EVD.disabled[key] = !EVD.disabled[key]; 
+
+	EVD.scene.getObjectByName(group).children.forEach(function(c) {
+		if ( c.name === key ) {
+			c.visible = !EVD.disabled[key];
+		}
+	});
+}
+
+EVD.addSwitchRow = function(html) {
+	var tbl = document.getElementById("switches");
+	tbl.insertRow(tbl.rows.length).innerHTML = html;
+}
+
+EVD.clearSwitchRows = function() {
+	var tbl = document.getElementById("switches");
+	while (tbl.rows.length > 0) {
+		tbl.deleteRow(0);
+	}
+}
+
+// tpm: should make it that the help menu index does not depend on the 
+// specific group index
+EVD.addSwitchRows = function(data, group, gi) {
+	EVD.addSwitchRow('<td colspan="2" class="group">' + group + '<a href="#" class="help-detsystem" onclick="openPopup(event, \'help-detsystem-' + gi + '\', \'cursor\')"><img src="graphics/help-small.png" /></a></td>');
+
+	for ( var key in EVD.data_description ) {
+		if (EVD.data_description[key].group != group) {
+			continue;
+		}
+			
+		if (!data["Collections"][key]) {
+			continue;
+		}
+			
+		var on = !EVD.disabled[key] ? ' checked="true"' : "";
+		var count = data["Collections"][key].length;
+		var desc = EVD.data_description[key].desc;
+			
+		if (desc == null) {
+			desc = key;
+		}
+			
+		var count = "(" + count + ")";
+			
+		if (EVD.data_description[key].group === "Detector Model") {
+			//don't show count for the model; it doesn't make much sense
+			count = "";
+		}
+            
+        /*
+        if (! EVD.settings.showCollectionCount ){
+        	var count = "";
+        }
+        */
+			
+		var html = '<td class="sw">' + desc + count + '</td><td><input type="checkbox" id="' + key + '"' + on + ' onchange="EVD.toggle(\''+ group +'\',\''+ key + '\');">';
+			
+
+		// tpm disable this for now
+		/*
+		if (EVD.data_description[key].rank) {
+			html += '</td><td><img src="graphics/range-selector.png" class="range-selector-button" onclick="showRange(event, \'' + key + '\');" />';
+		} else {
+			html += '</td><td>';
+		}
+		*/
+		html += '</td><td>';
+		html += '</td>';
+		
+		EVD.addSwitchRow(html);
+	}
+
+	fleXenv.fleXcrollMain("switches-div");
+} 
+
+
 EVD.addToScene = function(data) {
 	// Whether it's geometry or event,
 	// the main object key is Collections.
@@ -26,7 +104,8 @@ EVD.addToScene = function(data) {
     	}
 
     	var desc = EVD.data_description[key];
-    
+    	desc.key = key;
+
     	var fn = desc.fn;
 
     	var dataref = null;
@@ -43,8 +122,6 @@ EVD.addToScene = function(data) {
     	// If something is already disabled via the toggle then 
     	// this should override what is from the desc
 		var on = !EVD.disabled[key] ? desc.on = true : desc.on = false;   	
-
-		console.log(key);
 
     	switch (desc.type) {
     		case CURVES:
@@ -110,9 +187,36 @@ EVD.addToScene = function(data) {
 					var obj = fn(edata[getIndex(rd, j)], rd, desc);
 					EVD.scene.getObjectByName(desc.group).add(obj);
       			}
-    		}
-  		}
-  	
+    	}
+  	}
+}
+
+EVD.loadDetector = function() {
+	EVD.clearSwitchRows();
+	EVD.addSwitchRows(EVD.detectorModel, "Detector Model", 0);
+	EVD.addToScene(EVD.detectorModel);
+}
+
+EVD.eventDataLoaded = function(data) {
+	EVD.eventData = data;
+	enableNextPrev();
+
+	// remove all but the geometry from the
+	// scene before rendering
+	EVD.scene.children.forEach(function(c) {
+		if ( c.name != "Detector Model" ) {
+			EVD.scene.getObjectByName(c.name).children.length = 0;
+		}
+	});
+
+	for ( var i = 0; i < EVD.data_groups.length; i++ ) {
+		if ( EVD.data_groups[i] === "Detector Model" ) {
+			continue;
+		}
+		EVD.addSwitchRows(data, EVD.data_groups[i], i);
+	}
+
+	EVD.addToScene(data);
 }
 
 EVD.hasWebGL = function() {
@@ -256,7 +360,7 @@ EVD.init = function() {
 	//EVD.inset_scene.add(arrowY);
 	//EVD.inset_scene.add(arrowZ);
 
-	EVD.addToScene(EVD.detectorModel);
+	EVD.loadDetector();
 }
 
 EVD.lookAtOrigin = function() {
