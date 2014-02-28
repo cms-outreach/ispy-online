@@ -15,6 +15,7 @@
 		<script src="./js/flexcroll.js"></script>
 		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
         <script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+        <script src="./js/jquery.dataTables.min.js"></script>
 		<script src="./js/pre3d.js"></script>
 		<script src="./js/pre3d_shape_utils.js"></script>
 		<script src="./js/base64.js"></script>
@@ -25,6 +26,24 @@
 		<script src="./js/detector-model-geometry.js"></script>
 		<script src="./js/data-description.js"></script>
 		<script src="./js/save.js"></script>
+		<script src="./js/table-view.js"></script>
+		<style type="text/css">
+		#datatable-scroll {
+        	width: 800px; 
+        	height: 150px;
+        	overflow: scroll;
+		}
+		.vscrollerbase {
+			visibility: visible !important;
+		}
+		#datatable-scroll .hscrollerbase {
+			visibility: visible !important;
+		}
+		#datatable-scroll .scrollerjogbox {
+			visibility: visible !important;
+		}
+		</style>
+
 	</head>
 	<body class="black">
 	<script>
@@ -58,7 +77,10 @@
 		<td class="bordered">
 			<%@ include file="./jsp/controls-help.jspf" %>
 		</td>
-		<td class="bordered">
+		<td class="bordered" id="table">
+			<div id="datatable-scroll" class="flexcroll">
+			<table id="collection-table"></table>
+		    </div>
 		</td>
 	</tr>
 </table>
@@ -76,6 +98,5 @@
 <%@ include file="./jsp/speed-test.jspf" %>
 <%@ include file="./jsp/about.jspf" %>
 <%@ include file="./jsp/detector-help.jspf" %>
-
-	</body>
+</body>
 </html>
