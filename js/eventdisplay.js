@@ -85,7 +85,7 @@ function addSwitchRows(d_event) {
 	for (var g = 0; g < d_groups.length; g++) {
 		addSwitchRow('<td colspan="2" class="group">' + d_groups[g] + 
 				'<a href="#" class="help-detsystem" onclick="openPopup(event, \'help-detsystem-' + 
-				g + '\', \'cursor\')"><img src="../graphics/help-small.png" /></a></td>');
+				g + '\', \'cursor\')"><img src="./graphics/help-small.png" /></a></td>');
 		for (var key in d_descr) {
 		  if (d_descr[key].group != d_groups[g]) {
 				continue;
@@ -109,7 +109,7 @@ function addSwitchRows(d_event) {
                         }
 			var html = '<td class="sw">' + desc + count + '</td><td><input type="checkbox" id="' + key + '"' + on + ' onchange="toggle(\''+ key + '\');">';
 			if (d_descr[key].rank) {
-				html += '</td><td><img src="../graphics/range-selector.png" class="range-selector-button" onclick="showRange(event, \'' + key + '\');" />';
+				html += '</td><td><img src="./graphics/range-selector.png" class="range-selector-button" onclick="showRange(event, \'' + key + '\');" />';
 			}
 			else {
 				html += '</td><td>';

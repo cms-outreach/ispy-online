@@ -276,6 +276,7 @@ function centerElement(id) {
 }
 
 function openPopup(event, id) {
+	/*
 	if (event == "center") {
 		centerElement(id);
 		$("#" + id).show();
@@ -285,6 +286,11 @@ function openPopup(event, id) {
 		$("#" + id).css("top", (event.clientY + 10) + "px");
 		$("#" + id).show();
 	}
+	*/
+
+	// center all popups
+	centerElement(id);
+	$("#" + id).show();
 }
 
 function closePopup(id) {
