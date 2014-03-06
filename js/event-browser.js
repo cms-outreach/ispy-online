@@ -4,7 +4,9 @@ function showEventBrowser() {
 	clearList("browser-events");
 	$("#event-browser").show();
 	$("#browser-load").addClass("disabled");
-	browserFileList(document.settings.lastDir);
+	
+	//browserFileList(document.settings.lastDir);
+	updateFileList(document.currentFileList, "");
 }
 
 function closeEventBrowser() {
@@ -63,6 +65,30 @@ function stripOne(f) {
 }
 
 function selectFile(index) {
+	 var reader = new FileReader();
+
+    reader.onload = function(e) {
+    	var data = e.target.result; 
+       	var zip = new JSZip(data);
+       	var eventlist = []; 
+       	$.each(zip.files, function(index, zipEntry){
+       		if ( zipEntry._data !== null && zipEntry.name !== "Header" ) {
+       			eventlist.push(zipEntry.name);
+       		}
+       	});
+       	console.log(eventlist);
+       	updateEventsList(eventlist);
+    }
+    
+    reader.onerror = function(e) {
+       alert(e);
+    }
+
+    reader.readAsArrayBuffer(document.currentFileList[index]); 
+
+	//--
+
+
 	if (document.selectedFileIndex) {
 		$("#browser-file-" + document.selectedFileIndex).removeClass("selected");
 	}
@@ -114,7 +140,7 @@ function updateEventsList(list) {
 		var e = list[i];
 		var row = tbl.insertRow(tbl.rows.length);
 		var cell = row.insertCell(0); 
-		cell.innerHTML = '<a id="browser-event-' + i + '" class="event" onclick="selectEvent(\'' + i + '\');">' + e.name + '</a>';  
+		cell.innerHTML = '<a id="browser-event-' + i + '" class="event" onclick="selectEvent(\'' + i + '\');">' + e + '</a>';  
 	}
 	fleXenv.fleXcrollMain("browser-events-div");
 }

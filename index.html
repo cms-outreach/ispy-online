@@ -10,6 +10,7 @@
 		<link href="./css/event-browser.css" rel="stylesheet" type="text/css" />
 		<link href="./css/speed-test.css" rel="stylesheet" type="text/css" />
 		
+		<script src="./js/jszip.min.js"></script>
 		<script src="./js/elab.js"></script>
 		<script src="./js/utils.js"></script>
 		<script src="./js/flexcroll.js"></script>
@@ -41,9 +42,12 @@
 			<table id="toolbar">
 			<tr>
 				<td>
+					<!--
 					<a class="toolbar-button" onclick="showEventBrowser();">
 					<img src="./graphics/open.png" title="Open"/>
 					</a>
+				    -->
+				    <input type="file" title="Select one or multiple files to open" id="file-selector" onchange="loadFile();" multiple />
 				</td>
 				<td class="toolbar-separator">&nbsp;</td>
 				<td>
@@ -159,6 +163,7 @@
 
 <script src="./js/about.js"></script>
 <script src="./js/event-browser.js"></script>
+<script src="./js/file-loader.js"></script>
 <script src="./js/range-selection.js"></script>
 <script src="./js/settings.js"></script>
 <script src="./js/speed-test.js"></script>
