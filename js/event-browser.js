@@ -169,9 +169,11 @@ function prevEvent() {
 }
 
 function cleanupData(d) {
-    // rm non-standard json bits
-    // newer files will not have this problem
-    d = d.replace(/\'/g, "\"")
-	.replace(/nan/g, "0");
-    return d;
+  // rm non-standard json bits
+  // newer files will not have this problem
+  d = d.replace(/\(/g,'[')
+	    .replace(/\)/g,']')
+	    .replace(/\'/g, "\"")
+	    .replace(/nan/g, "0");
+  return d;
 }
