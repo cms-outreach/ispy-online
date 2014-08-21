@@ -51,50 +51,6 @@ function selectAll(start, finish, direction) {
 		}
 	}
 }
-    
-function reference(name, W, H) {
-	if (!H) {
-		H = 250;
-	}
-	while (name.indexOf(" ") > 0) {
-		name = name.replace(" ", "_");
-	}
-	var url="../references/display.jsp?name=" + name + "&type=reference";
-	var winPref = "width=400,height=" + H + ",scrollbars=yes,toolbar=no,menubar=no,status=no,resizable=yes,title=yes";
-	window.open(url, "_blank", winPref);
-}
-
-function glossary(name, H) {
-	if (!H) {
-		H = 250;
-	}
-	while (name.indexOf(" ") > 0) {
-		name = name.replace(" ", "_");
-	}
-	var url = "../references/display.jsp?name=" + name + "&type=glossary";
-    var winPref = "width=300,height=" + H + ",scrollbars=no,toolbar=no,menubar=no,status=no,resizable=yes,title=yes";
-	window.open(url, "_blank", winPref);
-}
-
-function describe(tr, arg, label) {
-	var url="../jsp/dispDescription.jsp?tr=" + tr + "&arg=" + arg + "&label=" + label;
-    var winPref = "width=250,height=250,scrollbars=no,toolbar=no,menubar=no,status=no,resizable=yes,title=yes";
-	window.open(url, "_blank", winPref);
-}
-
-
-function showRefLink(url, W, H) {
-	var height=500;
-	var width=500;
-	if (!H) {
-		H = 500;
-	}
-	if (!W) {
-		W = 500;
-	}
-	winPref = "width=" + W + ",height=" + H + ",scrollbars=yes,toolbar=yes,menubar=no,status=yes,resizable=yes";
-	window.open(url, "_blank", winPref);
-}
 
 //http://www.experts-exchange.com/Web/Web_Languages/JavaScript/Q_21265898.html
 function toggle(t_show, t_hide, s_show, s_hide){
