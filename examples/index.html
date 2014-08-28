@@ -3,12 +3,15 @@
 	<head>
 		<title>CMS 3D Event Display</title>
 
+
 		<link href="../css/scrollbar.css" rel="stylesheet" type="text/css" />
 		<link href="../css/eventdisplay.css" rel="stylesheet" type="text/css" />
 		<link href="../css/settings.css" rel="stylesheet" type="text/css" />
 		<link href="../css/range-selection.css" rel="stylesheet" type="text/css" />
 		<link href="../css/event-browser.css" rel="stylesheet" type="text/css" />
 		<link href="../css/speed-test.css" rel="stylesheet" type="text/css" />
+
+<link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>		
 
 		<script src="../js/jszip.min.js"></script>
 		<script src="../js/elab.js"></script>
@@ -48,68 +51,73 @@
 				</td>
 				<td class="toolbar-separator">&nbsp;</td>
 				<td>
-					<a class="toolbar-button disabled" id="prev-event-button" onclick="prevEvent();">
-					<img src="../graphics/prev-event.png" title="Previous Event"/>
+					<a class="disabled" id="prev-event-button" onclick="prevEvent();">
+					  <i class="fa fa-chevron-left fa-2x fa-border" title="Previous Event"></i>
 					</a>
 				</td>
 				<td>
-					<a class="toolbar-button disabled" id="next-event-button" onclick="nextEvent();">
-					<img src="../graphics/next-event.png" title="Next Event"/>
-					</a>
-				</td>
-				<td class="toolbar-separator">&nbsp;</td>
-				<td>
-					<a class="toolbar-button" onclick="setCameraHome();">
-					<img src="../graphics/home.png" title="Return to Start View"/>
+					<a class="disabled" id="next-event-button" onclick="nextEvent();">
+					  <i class="fa fa-chevron-right fa-2x fa-border" title="Next Event"></i>
 					</a>
 				</td>
 				<td>
-					<a class="toolbar-button" onclick="zoom(1);">
-					<img src="../graphics/zoom_in_24.png" title="Zoom In"/>
+					<a class="toolbar" onclick="setCameraHome();">
+					  <i class="fa fa-home fa-2x fa-border" title="Return to Start View"></i>
 					</a>
 				</td>
 				<td>
-					<a class="toolbar-button" onclick="zoom(-1);">
-					<img src="../graphics/zoom_out_24.png" title="Zoom Out"/>
-					</a>
-				</td>
-				<td class="toolbar-separator">&nbsp;</td>
-				<td>
-					<a class="toolbar-button" onclick="setCameraRotation(0, 0, 0);">
-					<img src="../graphics/z-plane.png" title="X-Y Plane"/>
+					<a onclick="zoom(1);">
+					  <i class="fa fa-search-plus fa-2x fa-border" title="Zoom In"></i>
 					</a>
 				</td>
 				<td>
-					<a class="toolbar-button" onclick="setCameraRotation(0, Math.PI / 2, Math.PI / 2);">
-					<img src="../graphics/y-plane.png" title="Z-X Plane"/>
+					<a onclick="zoom(-1);">
+					<i class="fa fa-search-minus fa-2x fa-border" title="Zoom Out"></i>
 					</a>
 				</td>
 				<td>
-					<a class="toolbar-button" onclick="setCameraRotation(0, Math.PI / 2, 0);">
-					<img src="../graphics/x-plane.png" title="Y-Z Plane"/>
-					</a>
-				</td>
-				<td class="toolbar-separator">&nbsp;</td>
-				<td>
-					<a class="toolbar-button" id="perspective-view" onclick="setPerspectiveProjection(true);">
-					<img src="../graphics/perspective-projection.png" title="Perspective View"/>
-					</a>
+					<a onclick="setCameraRotation(0, 0, 0);">
+					  <i class="fa fa-border">
+					  <img src="../graphics/z-plane.png" title="X-Y Plane"/>
+                                          </i>
+					</button>
 				</td>
 				<td>
-					<a class="toolbar-button" id="orthographic-view" onclick="setPerspectiveProjection(false);">
-					<img src="../graphics/orthographic-projection.png" title="Orthographic View"/>
+					<a onclick="setCameraRotation(0, Math.PI / 2, Math.PI / 2);">
+					  <i class="fa fa-border">
+					  <img src="../graphics/y-plane.png" title="Z-X Plane"/>
+					  </i>
 					</a>
 				</td>
-				<td class="toolbar-separator">&nbsp;</td>
 				<td>
-					<a class="toolbar-button" onclick="showSettings();">
-					<img src="../graphics/settings.png" title="Settings"/>
+					<a onclick="setCameraRotation(0, Math.PI / 2, 0);">
+					  <i class="fa fa-border">
+					  <img src="../graphics/x-plane.png" title="Y-Z Plane"/>
+					  </i>
+					  </a>
+				</td>
+				<td>
+					<a id="perspective-view" onclick="setPerspectiveProjection(true);">
+					<i class="fa fa-border">
+					  <img src="../graphics/perspective-projection.png" title="Perspective View"/>
+					</i>
 					</a>
 				</td>
-				<td class="toolbar-separator">&nbsp;</td>
 				<td>
-					<a class="toolbar-button" id="help" onclick="openAboutWindow();">
-					<img src="../graphics/help2.png" title="About"/>
+					<a id="orthographic-view" onclick="setPerspectiveProjection(false);">
+					<i class="fa fa-border">
+					  <img src="../graphics/orthographic-projection.png" title="Orthographic View"/>
+					</i>
+					</a>
+				</td>
+				<td>
+					<a onclick="showSettings();">
+					<i class="fa fa-cog fa-2x fa-border" title="Settings"></i>
+					</a>
+				</td>
+				<td>
+					<a onclick="openAboutWindow();">
+					<i class="fa fa-question fa-2x fa-border" title="About"></i>
 					</a>
 				</td>
 			</tr>
@@ -173,7 +181,7 @@
 			<div class="title">Open Event</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closeEventBrowser();"><img src="../graphics/close.png" /></a>
+			<a class="titlebar-button" onclick="closeEventBrowser();"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -234,7 +242,7 @@
 			<div class="title">Energy Range Selector</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closeRangeSelector();"><img src="../graphics/close.png" /></a>
+			<a class="titlebar-button" onclick="closeRangeSelector();"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -269,7 +277,7 @@
 			<div class="title">Settings</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="saveAndHideSettings();"><img src="../graphics/close.png" /></a>
+			<a class="titlebar-button" onclick="saveAndHideSettings();"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -316,7 +324,7 @@
 <table class="titlebar">
 	<tr>
 		<td><div class="title">About</div></td>
-		<td class="buttons"><a class="titlebar-button" onclick="closeAboutWindow();"><img src="../graphics/close.png" /></a></td>
+		<td class="buttons"><a class="titlebar-button" onclick="closeAboutWindow();"><i class="fa fa-close"></i></td>
 	</tr>
 </table>
 <table width="100%" height="98%">
@@ -365,7 +373,7 @@
 			<div class="title">Browser Speed Test</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closeSpeedTest();"><img src="../graphics/close.png" /></a>
+			<a class="titlebar-button" onclick="closeSpeedTest();"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -411,7 +419,7 @@
 			<div class="title">Detector Model Help</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closePopup('help-detsystem-0');"><img src="../graphics/close.png" alt="close" /></a>
+			<a class="titlebar-button" onclick="closePopup('help-detsystem-0');"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -486,7 +494,7 @@
 			<div class="title">Tracking Help</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closePopup('help-detsystem-1');"><img src="../graphics/close.png" alt="close"/></a>
+			<a class="titlebar-button" onclick="closePopup('help-detsystem-1');"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -530,7 +538,7 @@
 			<div class="title">ECAL Help</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closePopup('help-detsystem-2');"><img src="../graphics/close.png" alt="close" /></a>
+			<a class="titlebar-button" onclick="closePopup('help-detsystem-2');"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -571,7 +579,7 @@
 			<div class="title">HCAL Help</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closePopup('help-detsystem-3');"><img src="../graphics/close.png" alt="close" /></a>
+			<a class="titlebar-button" onclick="closePopup('help-detsystem-3');"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -615,7 +623,7 @@
 			<div class="title">Muon Help</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closePopup('help-detsystem-4');"><img src="../graphics/close.png" alt="close" /></a>
+			<a class="titlebar-button" onclick="closePopup('help-detsystem-4');"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
@@ -662,7 +670,7 @@
 			<div class="title">Physics Objects Help</div>
 		</td>
 		<td class="buttons">
-			<a class="titlebar-button" onclick="closePopup('help-detsystem-5');"><img src="../graphics/close.png" alt="close" /></a>
+			<a class="titlebar-button" onclick="closePopup('help-detsystem-5');"><i class="fa fa-close"></i></a>
 		</td>
 	</tr>
 </table>
