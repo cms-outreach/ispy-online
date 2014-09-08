@@ -1,8 +1,8 @@
 {
   "name": "ispy-online",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "dependencies": {
-    "jquery": "~1.9",
-    "font-awesome": "~4.2.0"
+    "jquery": "~1.11",
+    "font-awesome": "~4.1.0"
   }
 }
