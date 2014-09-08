@@ -47,7 +47,7 @@ function selectAll(start, finish, direction) {
 	for (var i = start; i < finish; i++) {
 		fldObj = document.getElementById("cb" + i);
 		if (fldObj.type == 'checkbox') {
-			fldObj.checked = direction; 
+			fldObj.checked = direction;
 		}
 	}
 }
@@ -90,7 +90,7 @@ function updateLabels(source, name) {
 					nl = text.length;
 				}
 				text = text.substring(0, index) + source.value + text.substring(nl);
-				destInput.value = text; 
+				destInput.value = text;
 			}
 		}
 	}
@@ -127,8 +127,8 @@ function log(text) {
 
 function initlog(defaultOn) {
 	document.write(
-		'<a onclick="toggleLog();" style="position: fixed; bottom: 4px; right: 20px; z-index: 1;"><img id="logtoggle" src="graphics/plus.png" alt="Show Log" /></a>' +
-		'<div id="log" style="display: none; z-index: 0; height: 100px;">' + 
+		'<a onclick="toggleLog();" style="position: fixed; bottom: 4px; right: 20px; z-index: 1;"><img id="logtoggle" src="../graphics/plus.png" alt="Show Log" /></a>' +
+		'<div id="log" style="display: none; z-index: 0; height: 100px;">' +
 		'</div>');
 	if (defaultOn) {
 		toggleLog();
@@ -141,19 +141,19 @@ function toggleLog() {
 	if (l.style.display == "none") {
 		l.style.display = "block";
 		lt.alt = "Hide Log";
-		lt.src = "graphics/minus.png"; 
+		lt.src = "../graphics/minus.png";
 	}
 	else {
 		l.style.display = "none";
 		lt.alt = "Show Log";
-		lt.src = "graphics/plus.png";
+		lt.src = "../graphics/plus.png";
 	}
 }
 
 function printStackTrace() {
 	try {
 		kaboom();
-	} 
+	}
 	catch (e) {
 		log("<pre>" + e.stack + "</pre>");
 	}
@@ -204,7 +204,7 @@ function spinnerOff(selector) {
 	$(selector + " .spinner-image").remove();
 }
 
-function isArray(testObject) {   
+function isArray(testObject) {
     return testObject && !(testObject.propertyIsEnumerable('length')) && typeof testObject === 'object' && typeof testObject.length === 'number';
 }
 
@@ -212,7 +212,7 @@ function pp(obj) {
 	if (isArray(obj)) {
 		s = "[";
 		for (var i in obj) {
-			s += i + ": " + pp(obj[i]) + ", "; 
+			s += i + ": " + pp(obj[i]) + ", ";
 		}
 		s += "]";
 		return s;
