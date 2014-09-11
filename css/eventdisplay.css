@@ -136,17 +136,6 @@ a.disabled {
 	color: #808080;
 }
 
-i.fa-border {
-    background-color: #ffffff;
-    border-color: #cccccc;
-    color: #333333;
-}
-
-i.fa-border:hover {
-    background-color: #ccc;
-}
-
-/*	
 .toolbar-button {
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -168,7 +157,6 @@ i.fa-border:hover {
 	background-image: url("../graphics/button-bg1-in.png");
 	border: thin inset #f0f000;
 }
-*/
 
 #toolbar td.toolbar-separator {
 	border-left: thin solid #808080;
@@ -235,17 +223,17 @@ i.fa-border:hover {
 }
 
 body ul.menu {
-	top: -1000px; 
+	top: -1000px;
 	left: -1000px;
 	position: absolute;
-	z-index: 999; 
-	border-width: 0; 
-	float: none; 
+	z-index: 999;
+	border-width: 0;
+	float: none;
 	background-color: black;
 	height: auto;
 	margin: 0;
-	padding: 2px; 
-	width: auto;	
+	padding: 2px;
+	width: auto;
 	border: solid 1px gray;
 }
 
@@ -258,12 +246,12 @@ body ul.menu li {
 	background-color: black;
 	height: auto;
 	margin: 0;
-	text-align: left; 
-	text-decoration: none; 
+	text-align: left;
+	text-decoration: none;
 	vertical-align: top;
 	overflow: hidden;
-	cursor: default; 
-	padding: 4px; 
+	cursor: default;
+	padding: 4px;
 	color: #e0e0e0;
 }
 
@@ -281,10 +269,10 @@ body.white ul.menu li:hover {
 }
 
 body ul.menu li.separator {
-	background-color: black; 
-	margin: 4px; 
+	background-color: black;
+	margin: 4px;
 	padding: 1px;
-	border-bottom: thin dotted gray; 
+	border-bottom: thin dotted gray;
 }
 
 body.white ul.menu li.separator {

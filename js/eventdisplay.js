@@ -8,8 +8,8 @@ function disableSelection(target) {
 		target.style.MozUserSelect = "none";
 	}
 	else {//All other route (ie: Opera)
-		target.onmousedown = function() { 
-			return false 
+		target.onmousedown = function() {
+			return false
 		};
 	}
 }
@@ -47,14 +47,14 @@ function clearSwitchRows() {
 		tbl.deleteRow(0);
 	}
 }
-        
+
 var NOEVENT = {"Collections": {}};
 
 function addSwitchRows(d_event) {
 	for (var g = 0; g < d_groups.length; g++) {
-		addSwitchRow('<td colspan="2" class="group">' + d_groups[g] + 
-				'<a href="#" class="help-detsystem" onclick="openPopup(event, \'help-detsystem-' + 
-				g + '\', \'cursor\')"><i class="fa fa-question"></i></a></td>');
+		addSwitchRow('<td colspan="2" class="group">' + d_groups[g] +
+				'<a href="#" class="help-detsystem" onclick="openPopup(event, \'help-detsystem-' +
+				g + '\', \'cursor\')"><img src="../graphics/help-small.png"/></a></td>');
 		for (var key in d_descr) {
 		  if (d_descr[key].group != d_groups[g]) {
 				continue;
@@ -88,7 +88,7 @@ function addSwitchRows(d_event) {
 		}
 	}
 	fleXenv.fleXcrollMain("switches-div");
-} 
+}
 
 function combineData(a) {
   var c = {};
@@ -123,7 +123,7 @@ function getField(data, name) {
 }
 
 function initializeData() {
-	
+
   clearSwitchRows();
 
   document.d_event = NOEVENT;
@@ -131,11 +131,11 @@ function initializeData() {
   var d_event = document.d_event;
 
   addSwitchRows(d_event);
-	
+
   document.perfWeights = buildPerformanceWeights(document.perfWeights);
-	
+
   var data = new Array();
-	  
+
   for (var key in d_descr) {
     var edata = d_event["Collections"][key];
     if (!edata) {
@@ -172,7 +172,7 @@ function initializeData() {
     		console.log(edata.length, d_event["Associations"][desc.assoc].length, desc);
     		break;
     	}
-    	
+
       lines = fn(edata, rd, desc, dataref, d_event["Associations"][desc.assoc]);
 
       for (var k = 0; k < lines.length; k++) {
@@ -198,7 +198,7 @@ function initializeData() {
 	    if (obj[k] !== null) {
 	      vec.push(obj[k]);
 	    }
-	  }	
+	  }
 	}
       }
       break;
@@ -209,7 +209,7 @@ function initializeData() {
       }
     }
   }
-	
+
   document.data = data;
 }
 
@@ -246,7 +246,7 @@ var GLOBAL_RANK_THRESHOLD = 0.9;
 function setupCanvasCB() {
 	document.d_event = NOEVENT;
 	document.perfWeights = [];
-	
+
 	restoreSettingsFromCookie();
 	if (document.settings.invertColors) {
 		document.body.className = "white";
@@ -254,7 +254,7 @@ function setupCanvasCB() {
 	else {
 		document.body.className = "black";
 	}
-	
+
 	var black = new Pre3d.RGBA(0, 0, 0, 1);
 	var white = new Pre3d.RGBA(1, 1, 1, 1);
 
@@ -262,20 +262,20 @@ function setupCanvasCB() {
 	disableSelection(screen_canvas);
 	var renderer = new Pre3d.Renderer(screen_canvas);
 	document.renderer = renderer;
-	
+
 	var arrowX = Pre3d.ShapeUtils.makeSolidArrow(0, 0, 0, 1, 0, 0, 10);
 	var arrowY = Pre3d.ShapeUtils.makeSolidArrow(0, 0, 0, 0, 1, 0, 10);
 	var arrowZ = Pre3d.ShapeUtils.makeSolidArrow(0, 0, 0, 0, 0, 1, 10);
 	arrowX.fillColor = new Pre3d.RGBA(1, 0, 0, 1);
 	arrowY.fillColor = new Pre3d.RGBA(0, 1, 0, 1);
 	arrowZ.fillColor = new Pre3d.RGBA(0, 0, 1, 1);
-	
-	
+
+
 	var TARGET_FPS = 20;
 	var NEVER = 100000000000000000;
 	var fastDraw = null;
        var slowDraw = null;
-    
+
     function setCamera() {
     	var camera_state = document.cameraState;
         var ct = renderer.camera.transform;
@@ -285,7 +285,7 @@ function setupCanvasCB() {
         ct.rotateX(camera_state.rotate_x);
         ct.translate(camera_state.x, camera_state.y, camera_state.z);
     }
-    
+
 	function redraw() {
 		if (fastDraw != null) {
 			clearTimeout(fastDraw);
@@ -299,7 +299,7 @@ function setupCanvasCB() {
 			setCamera();
 			draw(NEVER);
 		}, 100);
-      
+
 		fastDraw = setTimeout(function() {
 			fastDraw = null;
 			var now = new Date().getTime();
@@ -307,21 +307,21 @@ function setupCanvasCB() {
 			draw(now + 1000 / TARGET_FPS);
 		}, 1);
 	}
-	
+
 	var lastRoundCount = 1000;
 	var lastChunkCount = 100000;
-	
+
 	function draw(deadline) {
 		var start = new Date().getTime();
 		if (deadline == NEVER) {
 			lastRoundCount = 100000;
 			lastChunkCount = 1000;
 		}
-		
+
 		var perfWeights = document.perfWeights;
 		var d_event = document.d_event;
 		var data = document.data;
-		
+
 		renderer.orthographicProjection = document.settings.orthographicProjection;
 		renderer.precomputeTransform();
 		renderer.ambientLight = 0.5;
@@ -351,7 +351,7 @@ function setupCanvasCB() {
 				}
 		      }
 			renderer.ctx.setFillColor(1, 1, 1, 1);
-		} 
+		}
 		else {
 			renderer.ctx.setStrokeColor = function setStrokeColor(r, g, b, a) {
 		        var rgba = [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255), a];
@@ -363,9 +363,9 @@ function setupCanvasCB() {
 		      }
 			renderer.ctx.setFillColor(0, 0, 0, 1);
 		}
-	  
+
 		renderer.drawBackground();
-    
+
 		for (var i = 0; i < perfWeights.length; i++) {
 			var key = perfWeights[i][0];
 			if (disabled[key]) {
@@ -389,7 +389,7 @@ function setupCanvasCB() {
 			var vec = data[key];
 			var rd = d_descr[key].rd;
 			switch (d.type) {
-				case TRACK: 
+				case TRACK:
 				case LINES:
 				case LINE:
 					var lineCaps = d.lineCaps;
@@ -479,16 +479,16 @@ function setupCanvasCB() {
 				break;
 			}
 		}
-	
+
 		renderer.ctx.lineWidth = 0.5;
 		renderer.drawBuffer();
 		renderer.emptyBuffer();
-		
+
 		//renderer.renderOffscreenBuffer();
-    
+
 		drawAxes(renderer, screen_canvas);
-		
-		
+
+
 		var end = new Date().getTime();
 		if (document.settings.showFPS) {
 			renderer.ctx.setFillColor(1, 1, 1, 1);
@@ -497,12 +497,12 @@ function setupCanvasCB() {
 			renderer.ctx.fillText("start: " + start, 10, 30);
 		}
 	}
-  
+
 	function drawAxes(renderer, canvas) {
 		renderer.ctx.lineWidth = 2;
 		var w = canvas.width;
 		var h = canvas.height;
-		  
+
 		renderer.ambientLight = 0.2;
 		var ct = renderer.camera.transform;
 		var m = ct.m;
@@ -512,7 +512,7 @@ function setupCanvasCB() {
 		ct.translate(-x, -y, -z - 20);
 		renderer.precomputeTransform();
 		renderer.draw_overdraw = true;
-		
+
 		renderer.ctx.save();
 		try {
 			renderer.ctx.translate(w / 2 - 50, h / 2 - 50);
@@ -539,10 +539,10 @@ function setupCanvasCB() {
 	// Have the engine handle mouse / camera movement for us.
 	document.cameraState = DemoUtils.autoCamera(renderer, 0, 0, -30, 0.40, -1.06, 0, redraw);
 
-	
+
 	document.addEventListener('keydown', function(e) {
 		e.preventDefault();
-		
+
 		if ( e.shiftKey ) {
 			switch(e.which) {
 				case 38: // up
@@ -553,7 +553,7 @@ function setupCanvasCB() {
 				zoom(-1);
 				break;
 			}
-		} 
+		}
 
 		if ( e.ctrlKey ) {
 			switch(e.which) {
@@ -572,13 +572,13 @@ function setupCanvasCB() {
 				case 39: // right
 				pan(1,0);
 				break;
-			}	
+			}
 		}
 	});
 
 	document.draw = redraw;
 	redraw();
-	
+
 	detectorModelLoaded(detectorModel);
 }
 
@@ -615,7 +615,7 @@ function setCameraRotation(rx, ry, rz) {
 	document.draw();
 }
 
-function setCameraHome() {	
+function setCameraHome() {
 	var x = 0;
 	var y = 0;
 	var z = -30;
@@ -629,17 +629,17 @@ function setCameraHome() {
 	document.cameraState.rotate_x = rx;
 	document.cameraState.rotate_y = ry;
 	document.cameraState.rotate_z = rz;
-	
-	document.draw();	
+
+	document.draw();
 }
 
 function zoom(step) {
 	document.cameraState.z = document.cameraState.z + step;
-	document.draw();	
+	document.draw();
 }
 
 function pan(xstep, ystep) {
 	document.cameraState.x = document.cameraState.x + xstep;
 	document.cameraState.y = document.cameraState.y + ystep;
-	document.draw();	
+	document.draw();
 }
