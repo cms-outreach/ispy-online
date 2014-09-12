@@ -2,20 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>CMS 3D Event Display</title>
-	
+
 		<link href="./css/scrollbar.css" rel="stylesheet" type="text/css" />
-		<link href="./css/eventdisplay.css" rel="stylesheet" type="text/css" />		
+		<link href="./css/eventdisplay.css" rel="stylesheet" type="text/css" />
 		<link href="./css/settings.css" rel="stylesheet" type="text/css" />
 		<link href="./css/range-selection.css" rel="stylesheet" type="text/css" />
 		<link href="./css/event-browser.css" rel="stylesheet" type="text/css" />
 		<link href="./css/speed-test.css" rel="stylesheet" type="text/css" />
-		
+
 		<script src="./js/jszip.min.js"></script>
 		<script src="./js/elab.js"></script>
 		<script src="./js/utils.js"></script>
 		<script src="./js/flexcroll.js"></script>
-		<script src="./js/jquery-1.9.0.js"></script>
-        <script src="./js/jquery-migrate-1.0.0.js"></script>
+		<script src="./js/jquery.min.js"></script>
 		<script src="./js/pre3d.js"></script>
 		<script src="./js/pre3d_shape_utils.js"></script>
 		<script src="./js/base64.js"></script>
@@ -138,7 +137,7 @@
 		<table>
 			<tr><td class="ctrl"><img src="./graphics/mouse.png" /></td><td>&rarr;</td><td>rotate</td></tr>
 			<tr><td class="ctrl"><span class="key">Ctrl</span> + <img src="./graphics/mouse.png" /></td><td>&rarr;</td><td>pan x/y</td></tr>
-			<tr><td class="ctrl"><span class="key">Ctrl</span> + 
+			<tr><td class="ctrl"><span class="key">Ctrl</span> +
 			<span class="key">&#9650</span>
 			<span class="key">&#9660</span>
 			<span class="key">&#9664</span>
@@ -329,7 +328,7 @@
 			This is a browser-based event display for the <a target="edabout" href="http://cern.ch/cms">CMS experiment</a> at the LHC.
 			</p>
 			<p>
-			This software is part of the <a target="edabout" href="http://www.i2u2.org">I2U2</a> project, 
+			This software is part of the <a target="edabout" href="http://www.i2u2.org">I2U2</a> project,
 			which is published under the <a target="edabout" href="http://fermitools.fnal.gov/about/terms.html">Fermitools License</a>.
 			</p>
 			<p>
@@ -424,44 +423,44 @@
 			<dl>
 			<dt>Tracker</dt>
 			<dd>Innermost part of CMS; samples trajectories of charged particles</dd>
-					
+
 			<dt>ECAL (Electromagnetic Calorimeter)</dt>
 			<dd>
 				<dl>
 				<dt>ECAL Barrel</dt>
 				<dd>Central electromagnetic calorimeter; measures energy of electrons and photons</dd>
-							
+
 				<dt>ECAL Endcap</dt>
 				<dd>Electromagnetic calorimeters at either end of CMS for measurements close to the beam axis</dd>
-							
+
 				<dt>ECAL Preshower</dt>
 				<dd>Provides an initial (before the EM shower) measurement helping to discriminate between photons and (neutral) pions</dd>
 				</dl>
 			</dd>
-					
+
 			<dt>HCAL (Hadron Calorimeter)</dt>
 			<dd>
 				<dl>
 				<dt>HCAL Barrel</dt>
 				<dd>Central hadronic calorimeter; measures energy of hadrons</dd>
-							
+
 				<dt>HCAL Endcap</dt>
 				<dd>Hadronic calorimeters at either end of CMS for measurements close to the beam axis</dd>
-							
+
 				<dt>HCAL Outer</dt>
 				<dd>Final HCAL layer just outside the solenoid magnet</dd>
-							
+
 				<dt>HCAL Forward</dt>
 				<dd>Hadronic calorimeters farther down and very close to the beam axis</dd>
 				</dl>
 			</dd>
-					
+
 			<dt>Drift Tubes (DT)</dt>
 			<dd>Main large central muon chambers outside the solenoid and HCAL Outer using ionization of gas to record muon hits</dd>
-					
+
 			<dt>Cathode Strip Chambers (CSC)</dt>
 			<dd>Forward muon detectors</dd>
-					
+
 			<dt>Resistive Place Chambers (RPC)</dt>
 			<dd>Solid state muon detectors</dd>
 			</dl>
@@ -499,13 +498,13 @@
 			<dl>
 			<dt>Tracks (reco.)</dt>
 			<dd>All reconstructed particle tracks in the tracker</dd>
-						
+
 			<dt>Clusters (Si Pixels)</dt>
 			<dd>Recorded events in the innermost part of the tracker</dd>
-					
+
 			<dt>Clusters (Si Strips)</dt>
 			<dd>Recorded events in the tracker</dd>
-					
+
 			<dt>Rec. Hits (Tracking)</dt>
 			<dd>All particle hits in the tracker</dd>
 			</dl>
@@ -543,10 +542,10 @@
 			<dl>
 			<dt>Barrel Rec. Hits</dt>
 			<dd>Energy in a single ECAL crystal</dd>
-					
+
 			<dt>Endcap Rec. Hits</dt>
 			<dd>Hits in ECAL Endcap</dd>
-					
+
 			<dt>Preshower Rec. Hits</dt>
 			<dd>Hits in ECAL Preshower</dd>
 			</dl>
@@ -557,7 +556,7 @@
 			<table>
 				<tr>
 					<td></td>
-					<td>	
+					<td>
 						<a class="button" onclick="closePopup('help-detsystem-2');">Close</a>
 					</td>
 				</tr>
@@ -584,13 +583,13 @@
 			<dl>
 			<dt>Barrel Rec. Hits</dt>
 			<dd>Energy in a single HCAL tile</dd>
-					
+
 			<dt>Endcap Rec. Hits</dt>
 			<dd>Hits in HCAL Endcap</dd>
-					
+
 			<dt>Forward Rec. Hits</dt>
 			<dd>Hits in HCAL Forward</dd>
-					
+
 			<dt>Outer Rec. Hits</dt>
 			<dd>Hits in HCAL Outer</dd>
 			</dl>
@@ -628,16 +627,16 @@
 			<dl>
 			<dt>DT Rec. Hits</dt>
 			<dd>Muon hits in Drift Tubes (barrel)</dd>
-					 
+
 			<dt>DT Rec. Segments</dt>
 			<dd>Muon track segments in Drift Tubes (barrel)</dd>
-					
+
 			<dt>CSC Segments</dt>
 			<dd>Muon track segments in Cathode Strip Chambers (forward)</dd>
-					
+
 			<dt>RPC Rec. Hits</dt>
 			<dd>Muon hits in Resistive Plate Chambers (barrel)</dd>
-					
+
 			<dt>CSC Rec. Hits</dt>
 			<dd>Muon hits in Cathode Strip Chambers (forward)</dd>
 			</dl>
@@ -681,21 +680,21 @@
 
 			<dt>Tracker Muons (Reco)</dt>
 			<dd>Reconstructed muon tracks in tracker</dd>
-					
+
 			<dt>Stand-alone Muons (Reco)</dt>
 			<dd>Reconstructed muon track segments in muon chambers</dd>
-					
+
 			<dt>Global Muons (Reco)</dt>
 			<dd>Reconstructed complete muon tracks</dd>
-					
+
 			<dt>Calorimeter energy towers</dt>
 			<dd>Histogram "towers" to indicate energy deposits in calorimeters summed over the trajectories</dd>
-					
+
 			<dt>Jets</dt>
 			<dd>Collimated groups of particles which come from strong force energy conversion to matter</dd>
 
             <dt>MET</dt>
-            <dd>Missing transverse energy</dd> 
+            <dd>Missing transverse energy</dd>
             </dl>
 		</td>
 	</tr>
