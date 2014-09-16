@@ -53,6 +53,7 @@
 			</canvas>
 		</td>
 	</tr>
+<!--
 	<tr>
 		<td class="bordered">
 			<%@ include file="./jsp/controls-help.jspf" %>
@@ -60,6 +61,7 @@
 		<td class="bordered">
 		</td>
 	</tr>
+-->
 </table>
 <script src="./js/eventdisplay.js"></script>
 
