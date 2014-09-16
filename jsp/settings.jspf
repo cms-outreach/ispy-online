@@ -5,7 +5,7 @@
 				<div class="title">Settings</div>
 			</td>
 			<td class="buttons">
-				<a class="titlebar-button" onclick="saveAndHideSettings();"><img src="../graphics/close.png" /></a>
+				<a class="titlebar-button" onclick="saveAndHideSettings();"><img src="./graphics/close.png" /></a>
 			</td>
 		</tr>
 	</table>
@@ -53,7 +53,7 @@
 					</tr>
 					<tr>
 						<td>
-							<input type="checkbox" id="setting-global-cut" onclick="toggleGlobalCut();" />Show only calorimeter hits with energies in the top 
+							<input type="checkbox" id="setting-global-cut" onclick="toggleGlobalCut();" />Show only calorimeter hits with energies in the top
 							<input class="text-input" type="text" id="settings-global-low-cut-percentage" size="5"/> percent.
 						</td>
 					</tr>

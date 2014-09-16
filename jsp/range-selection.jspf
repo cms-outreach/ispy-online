@@ -5,7 +5,7 @@
 				<div class="title">Energy Range Selector</div>
 			</td>
 			<td class="buttons">
-				<a class="titlebar-button" onclick="closeRangeSelector();"><img src="../graphics/close.png" /></a>
+				<a class="titlebar-button" onclick="closeRangeSelector();"><img src="./graphics/close.png" /></a>
 			</td>
 		</tr>
 	</table>

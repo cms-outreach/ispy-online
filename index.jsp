@@ -2,19 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>CMS 3D Event Display</title>
-	
+
 		<link href="./css/scrollbar.css" rel="stylesheet" type="text/css" />
-		<link href="./css/eventdisplay.css" rel="stylesheet" type="text/css" />		
+		<link href="./css/eventdisplay.css" rel="stylesheet" type="text/css" />
 		<link href="./css/settings.css" rel="stylesheet" type="text/css" />
 		<link href="./css/range-selection.css" rel="stylesheet" type="text/css" />
 		<link href="./css/event-browser.css" rel="stylesheet" type="text/css" />
 		<link href="./css/speed-test.css" rel="stylesheet" type="text/css" />
-		
+
 		<script src="./js/elab.js"></script>
 		<script src="./js/utils.js"></script>
 		<script src="./js/flexcroll.js"></script>
-		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
-        <script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+		<script src="./js/jquery.min.js"></script>
 		<script src="./js/pre3d.js"></script>
 		<script src="./js/pre3d_shape_utils.js"></script>
 		<script src="./js/base64.js"></script>

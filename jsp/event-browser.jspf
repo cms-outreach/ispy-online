@@ -5,7 +5,7 @@
 				<div class="title">Open Event</div>
 			</td>
 			<td class="buttons">
-				<a class="titlebar-button" onclick="closeEventBrowser();"><img src="../graphics/close.png" /></a>
+				<a class="titlebar-button" onclick="closeEventBrowser();"><img src="./graphics/close.png" /></a>
 			</td>
 		</tr>
 	</table>

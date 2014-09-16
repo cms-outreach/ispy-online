@@ -5,7 +5,7 @@
 				<div class="title">About</div>
 			</td>
 			<td class="buttons">
-				<a class="titlebar-button" onclick="closeAboutWindow();"><img src="../graphics/close.png" /></a>
+				<a class="titlebar-button" onclick="closeAboutWindow();"><img src="./graphics/close.png" /></a>
 			</td>
 		</tr>
 	</table>
@@ -14,7 +14,7 @@
 			<td width="100%">
 				<p>This is a browser-based event display for the <a target="edabout" href="http://cern.ch/cms">CMS experiment</a> at the LHC.</p>
 				<p>
-					This software is part of the <a target="edabout" href="http://www.i2u2.org">I2U2</a> project, 
+					This software is part of the <a target="edabout" href="http://www.i2u2.org">I2U2</a> project,
 					which is published under the <a target="edabout" href="http://fermitools.fnal.gov/about/terms.html">Fermitools License</a>.
 				</p>
 				<p>

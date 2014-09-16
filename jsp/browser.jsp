@@ -3,18 +3,20 @@
 <%@ page import="java.util.zip.*" %>
 <%
 	// Set the data location
-	String dataLocation = "/Users/mccauley/higgs-public-release";
+	String dataLocation = "/afs/cern.ch/project/jps/reps/opendata-ispy";
+
 	String op = request.getParameter("op");
 	String param = request.getParameter("param");
-	
+
 	response.setHeader("Cache-Control", "no-cache");
 	System.out.println("Event display browser: op = " + op + ", param = " + param);
 	if ("list".equals(op)) {
 	    if (param == null) {
 	        throw new RuntimeException("Missing directory parameter");
 	    }
+	    //File loc = new File(absoluteDiskPath);
 	    File loc = new File(dataLocation);
-	    File dir = new File(loc, param);
+			File dir = new File(loc, param);
 	    String cloc = loc.getCanonicalPath();
 	    String cdir = dir.getCanonicalPath();
 	    if (!cdir.startsWith(cloc)) {
@@ -83,7 +85,7 @@
 	     	 	else {
 	     	 	    out.write(", ");
 	     	 	}
-	     	 	out.write("{ type: 2, name: \"" + e.getName() + "\", size: " + e.getSize() + " }");  
+	     	 	out.write("{ type: 2, name: \"" + e.getName() + "\", size: " + e.getSize() + " }");
 	        }
 	    }
 	    out.write("]]");

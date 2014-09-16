@@ -9,7 +9,7 @@
 				<div class="title">Browser Speed Test</div>
 			</td>
 			<td class="buttons">
-				<a class="titlebar-button" onclick="closeSpeedTest();"><img src="../graphics/close.png" /></a>
+				<a class="titlebar-button" onclick="closeSpeedTest();"><img src="./graphics/close.png" /></a>
 			</td>
 		</tr>
 	</table>
