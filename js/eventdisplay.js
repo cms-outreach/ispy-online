@@ -78,7 +78,7 @@ function addSwitchRows(d_event) {
                         }
 			var html = '<td class="sw">' + desc + count + '</td><td><input type="checkbox" id="' + key + '"' + on + ' onchange="toggle(\''+ key + '\');">';
 			if (d_descr[key].rank) {
-				html += '</td><td><img src="./graphics/range-selector.png" class="range-selector-button" onclick="showRange(event, \'' + key + '\');" />';
+				html += '</td><td><img src="../graphics/range-selector.png" class="range-selector-button" onclick="showRange(event, \'' + key + '\');" />';
 			}
 			else {
 				html += '</td><td>';
