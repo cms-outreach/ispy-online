@@ -42,8 +42,8 @@
 	</tr>
 	<tr>
 		<td width="280px" class="bordered">
-			<div id="switches-div" style="overflow: auto; height: 600px;" class="flexcroll">
-				<table id="switches" width="266px">
+			<div id="switches-div" style="overflow: auto; height: 600px;">
+				<table id="switches" width="250px">
 				</table>
 			</div>
 		</td>

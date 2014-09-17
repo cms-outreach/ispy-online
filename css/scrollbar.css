@@ -2,7 +2,7 @@
 /* All comments can be freely removed from the css */
 
 /*
-Your custom scrollbar images do not need to have the same size as in example images, but the 
+Your custom scrollbar images do not need to have the same size as in example images, but the
 placement of the images with respect to eachother in the image may play an important role
 as some elements are auto-sized by fleXcroll. You do not need to define images for
 all elements, you may want to have some transparency, or simply a filled color without
@@ -31,7 +31,7 @@ not for user customization, and is mandatory*/
 	top: 0; left: 0;
 }
 
-/* For scrollbars, defining a color for background alongside with an image 
+/* For scrollbars, defining a color for background alongside with an image
 is always a good idea, this way the scrollbars are visible until images load */
 .vscrollerbase {
 /* vscrollerbase is the div that holds the scrollbar (parent of vscrollerbar) */
@@ -138,12 +138,12 @@ bottom: 0px; right: 0px;
 /* Following are for scrollbase images, may not always be required */
 
 .black .vscrollerbase {
-/* Vertical scrollbar's base body */ 
+/* Vertical scrollbar's base body */
 	background: #404040 0px 0px repeat-y;
 }
 
 .white .vscrollerbase {
-/* Vertical scrollbar's base body */ 
+/* Vertical scrollbar's base body */
 	background: #b0b0b0 0px 0px repeat-y;
 }
 
@@ -165,7 +165,7 @@ bottom: 0px; right: 0px;
 }
 
 .hscrollerbase {
-/* Horziontal scrollbar's base body */ 
+/* Horziontal scrollbar's base body */
 background: #D7EBDF url("../graphics/horizontalbarbody_cornerjog.png") 0px -15px repeat-x;
 }
 

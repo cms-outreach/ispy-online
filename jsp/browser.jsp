@@ -4,6 +4,7 @@
 <%
 	// Set the data location
 	String dataLocation = "/afs/cern.ch/project/jps/reps/opendata-ispy";
+	//String dataLocation = "/Users/mccauley/test-opendata";
 
 	String op = request.getParameter("op");
 	String param = request.getParameter("param");
