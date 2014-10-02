@@ -7,6 +7,17 @@ function loadIg(filename) {
       error: function(req, status, error) { console.error(error); }
   }).done(function(data) {
 
+  if (typeof define === "function" && define.amd) {
+    // define(JSZip);
+    console('AMD');
+  } else if (typeof module === "object" && module.exports) {
+    //module.exports = JSZip;
+    console.log('module.exports');
+  } else {
+    console.log('load!');
+  }
+
+
       var zip = new JSZip(data);
       var eventlist = [];
 
