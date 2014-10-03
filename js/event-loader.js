@@ -1,40 +1,47 @@
 function loadIg(filename) {
+   var request = $.ajax({
+     type: "GET",
+     url: filename,
+     mimeType: "text/plain; charset=x-user-defined",
+     error: function(req, status, error) { console.error(error); }
+   });
 
-  var request = $.ajax({
-      type: "GET",
-      url: filename,
-      mimeType: "text/plain; charset=x-user-defined",
-      error: function(req, status, error) { console.error(error); }
-  }).done(function(data) {
+   if ("function"== typeof define && define.amd) { // for AMD in invenio
+      require(["vendors/jszip/dist/jszip.min"], function(jszip) {
+        request.done(function(data) {
+          var zip = new jszip(data);
+          var eventlist = [];
 
-  if (typeof define === "function" && define.amd) {
-    // define(JSZip);
-    console('AMD');
-  } else if (typeof module === "object" && module.exports) {
-    //module.exports = JSZip;
-    console.log('module.exports');
-  } else {
-    console.log('load!');
-  }
+          $.each(zip.files, function(index, zipEntry){
+           if ( zipEntry._data !== null && zipEntry.name !== "Header" ) {
+              eventlist.push(zipEntry.name);
+           }
+          });
 
-
-      var zip = new JSZip(data);
-      var eventlist = [];
-
-      $.each(zip.files, function(index, zipEntry){
-        if ( zipEntry._data !== null && zipEntry.name !== "Header" ) {
-          eventlist.push(zipEntry.name);
-        }
+          document.currentEventList = eventlist;
+          document.igdata = zip;
+          document.selectedEventIndex = 0;
+          loadEvent();
+        });
       });
+   } else {
+       request.done(function(data){
 
-      document.currentEventList = eventlist;
-      //console.log(eventlist);
-      document.igdata = zip;
-      document.selectedEventIndex = 0;
-      loadEvent();
-  });
+         var zip = new JSZip(data);
+         var eventlist = [];
 
-  request.done();
+         $.each(zip.files, function(index, zipEntry){
+           if ( zipEntry._data !== null && zipEntry.name !== "Header" ) {
+             eventlist.push(zipEntry.name);
+           }
+         });
+
+         document.currentEventList = eventlist;
+         document.igdata = zip;
+         document.selectedEventIndex = 0;
+         loadEvent();
+       });
+     }
 }
 
 function loadEvent() {
