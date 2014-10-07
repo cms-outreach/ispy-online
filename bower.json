@@ -1,8 +1,8 @@
 {
-  "name": "ispy-online",
-  "version": "0.0.16",
+ "name": "ispy-online",
+  "version": "0.0.17",
   "dependencies": {
     "jquery": "~1.11",
-    "Stuk/jszip": "2.4.0"
+    "jszip": "https://github.com/Stuk/jszip.git"
   }
 }
