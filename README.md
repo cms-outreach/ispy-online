@@ -1,3 +1,6 @@
+Development has moved to another repo: <a href="https://github.com/cms-outreach/ispy-webgl">ispy-webgl</a>
+==========================================================================================================
+
 Browser-based event display for the CMS experiment at the LHC
 
 A couple instances:
