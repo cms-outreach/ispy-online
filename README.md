@@ -1,6 +1,16 @@
+Development has moved to another repo: <a href="https://github.com/cms-outreach/ispy-webgl">ispy-webgl</a>
+==========================================================================================================
+
 Browser-based event display for the CMS experiment at the LHC
 
+A couple instances:
+
 http://www.i2u2.org/elab/cms/event-display
+
+http://cern.ch/opendata-ispy
+
+For more information on the input data format:
+http://cms-outreach.github.io/ispy
 
 Authors: Mihael Hategan, Thomas McCauley, Phong Nguyen
 
